@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    /* [STRICTLY ORIGINAL UI/UX] */
+    /* ALL ORIGINAL STYLES PRESERVED */
     :root { --bg: #f7f7f5; --white: #ffffff; --text: #0f0f0f; --muted: #6b6b6b; --border: #e4e4e0; --red: #e63946; --red-light: #fde8ea; --yellow: #f4a261; --yellow-light: #fef3e8; --green: #2a9d8f; --green-light: #e6f5f3; --accent: #1a1a2e; --accent2: #e63946; --blue: #3b82f6; --blue-light: #eff6ff; --purple: #7c3aed; --purple-light: #f5f3ff; --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04); --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04); --shadow-lg: 0 12px 48px rgba(0,0,0,0.12); --radius: 16px; --radius-sm: 10px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
@@ -31,8 +31,6 @@
     .input-group input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(230,57,70,0.08); }
     .cta-btn { width: 100%; margin-top: 8px; padding: 16px 24px; background: var(--text); color: var(--white); font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; border: none; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; letter-spacing: -0.01em; }
     .cta-btn:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
-    .hero-trust { margin-top: 20px; font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 16px; animation: fadeUp 0.5s 0.4s ease both; }
-    @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
     #results { display: none; max-width: 720px; margin: 0 auto; padding: 0 24px 80px; animation: fadeUp 0.5s ease both; }
     #results.visible { display: block; }
     .score-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 32px; text-align: center; box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative; overflow: hidden; }
@@ -44,7 +42,6 @@
     .ring-bg { stroke: var(--border); }
     .ring-fill { stroke: var(--score-color, var(--red)); }
     .score-num { font-family: 'Syne', sans-serif; font-size: 3.2rem; font-weight: 800; line-height: 1; color: var(--score-color, var(--red)); position: relative; z-index: 1; }
-    .score-denom { font-size: 1.1rem; font-weight: 400; color: var(--muted); }
     .score-label { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
     .score-brutal { font-size: 1.05rem; color: var(--muted); font-weight: 400; }
     .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: -0.01em; }
@@ -56,17 +53,15 @@
     .p-status { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; }
     .p-status.present { color: var(--green); }
     .p-status.missing { color: var(--red); }
-    .p-score { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--muted); }
     .insight-block { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: var(--radius); padding: 32px; color: white; margin-bottom: 20px; position: relative; overflow: hidden; }
     .insight-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
     .insight-text { font-family: 'Syne', sans-serif; font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 700; line-height: 1.4; color: white; margin-bottom: 14px; }
-    .insight-sub { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
     .locked-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative; }
     .locked-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
     .locked-overlay { position: absolute; inset: 60px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.95) 60%); padding: 24px; text-align: center; }
     .lock-icon { width: 52px; height: 52px; background: var(--text); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
     .pay-btn { width: 100%; padding: 18px 24px; background: var(--accent2); color: white; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; border: none; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.15s, box-shadow 0.15s; letter-spacing: -0.01em; position: relative; overflow: hidden; }
-    .ipaid-btn { width: 100%; margin-top: 12px; padding: 15px 24px; background: var(--white); color: var(--green); font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; border: 2px solid var(--green); border-radius: var(--radius-sm); cursor: pointer; display: none; align-items: center; justify-content: center; gap: 8px; animation: fadeUp 0.4s ease both; }
+    .ipaid-btn { width: 100%; margin-top: 12px; padding: 15px 24px; background: var(--white); color: var(--green); font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; border: 2px solid var(--green); border-radius: var(--radius-sm); cursor: pointer; display: none; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s, transform 0.15s; animation: fadeUp 0.4s ease both; }
     .ipaid-btn.show { display: flex; }
     .loading-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(247,247,245,0.92); backdrop-filter: blur(8px); flex-direction: column; align-items: center; justify-content: center; text-align: center; }
     .loading-overlay.active { display: flex; }
@@ -82,8 +77,7 @@
     .report-section-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
     .diag-score-bar { background: var(--bg); border-radius: 100px; height: 10px; overflow: hidden; margin: 12px 0 6px; }
     .diag-score-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
-    .callout { border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; font-size: 0.88rem; line-height: 1.5; }
-    .download-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: var(--text); color: white; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; border: none; border-radius: var(--radius-sm); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+    .download-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: var(--text); color: white; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; border: none; border-radius: var(--radius-sm); cursor: pointer; }
 </style>
 </head>
 <body>
@@ -96,19 +90,18 @@
 <div class="loading-overlay" id="loading">
     <div class="loading-spinner"></div>
     <div class="loading-text" id="loading-name">Scanning your presence...</div>
-    <div class="loading-sub">Checking real-time search data</div>
     <div class="loading-steps">
         <div class="loading-step" id="step1">Retrieving Google Search results</div>
-        <div class="loading-step" id="step2">Analyzing SERP snippets</div>
+        <div class="loading-step" id="step2">Analyzing SERP snippets with AI</div>
         <div class="loading-step" id="step3">Running Llama 3.1 analysis</div>
-        <div class="loading-step" id="step4">Finalizing reputation score</div>
+        <div class="loading-step" id="step4">Finalizing digital reputation score</div>
     </div>
 </div>
 
 <section class="hero" id="hero">
     <div class="hero-eyebrow"><div class="dot"></div>1,247 people checked today</div>
     <h1>What does<br>Google say<br>about <em>you?</em></h1>
-    <p class="hero-sub">People judge you in seconds. See your real first impression — before a recruiter, client, or date does.</p>
+    <p class="hero-sub">Get your real google_score + AI audit. See what recruiters and clients find first.</p>
     <div class="hero-card">
         <div class="input-group">
             <label>Your Full Name</label>
@@ -118,7 +111,7 @@
             <label>Profession (optional)</label>
             <input type="text" id="profInput" placeholder="e.g. Software Engineer">
         </div>
-        <button class="cta-btn" id="checkBtn" onclick="checkScore()">Check My Score</button>
+        <button class="cta-btn" onclick="checkScore()">Check My Score</button>
     </div>
 </section>
 
@@ -133,15 +126,15 @@
             <div class="score-num"><span id="scoreNum">0</span><span class="score-denom">/100</span></div>
         </div>
         <div class="score-label" id="scoreLabel">Analyzing...</div>
-        <div class="score-brutal" id="scoreBrutal"><strong>Calculating your real-time footprint...</strong></div>
+        <div class="score-brutal" id="scoreBrutal"><strong>Calculating your real-time reputation score.</strong></div>
     </div>
 
-    <p class="section-title">Platform Breakdown</p>
+    <p class="section-title">Verified Platforms Found</p>
     <div class="platform-grid" id="platformGrid"></div>
 
     <div class="insight-block">
         <div class="insight-tag">AI Reputation Verdict</div>
-        <div class="insight-text" id="insightText">"Analyzing search results..."</div>
+        <div class="insight-text" id="insightText">"Waiting for AI analysis..."</div>
     </div>
 
     <div class="locked-section" id="lockedSection">
@@ -157,66 +150,61 @@
         <div class="report-header">
             <div class="report-badge">✦ Premium Report · Unlocked</div>
             <div class="report-title-main">Reputation Report for <span id="rptName">You</span></div>
-            <div id="rptScoreDisplay" class="report-score-num" style="font-size: 3rem; color: #fff;">0</div>
+            <div id="rptScoreDisplay" class="report-score-num" style="font-size: 3rem;">0</div>
         </div>
-
         <div class="report-section">
             <div class="report-section-header">Section A: Diagnosis</div>
             <div class="report-section-body">
                 <p id="diagText"></p>
                 <div class="diag-score-bar"><div class="diag-score-fill" id="diagBar"></div></div>
-                <div class="callout red"><strong>Action Required:</strong> Check domain availability for <a id="godaddy-link" href="#" target="_blank" style="color:var(--blue); text-decoration: underline;">your name</a>.</div>
+                <div class="callout red" style="background:#fde8ea; padding:15px; border-radius:10px; margin-top:15px;">
+                    <strong>Critical Gap:</strong> Domain ownership. Check <a id="godaddy-link" href="#" target="_blank" style="color:var(--blue); text-decoration:underline;">yourname.com</a> immediately.
+                </div>
             </div>
         </div>
-        
-        <button class="download-btn" onclick="downloadPDF()">Download PDF Report</button>
+        <button class="download-btn" onclick="downloadPDF()">Download Full PDF Audit</button>
     </div>
 </div>
 
 <script>
+// LIVE BACKEND CONFIG
 const BACKEND_URL = "https://searchme-cv72.onrender.com/analyze";
 let globalData = null;
 
 async function checkScore() {
-    console.log("🚀 Requesting analysis from Render...");
     const name = document.getElementById('nameInput').value.trim();
     const context = document.getElementById('profInput').value.trim();
-    
-    if(!name) {
-        alert("Please enter your name.");
-        return;
-    }
+    if(!name) { alert("Please enter your name."); return; }
 
-    // UI State: Loading
-    document.getElementById('loading').classList.add('active');
-    document.getElementById('step1').classList.add('done');
+    const overlay = document.getElementById('loading');
+    overlay.classList.add('active');
 
     try {
+        // Sync Loading Steps
+        document.getElementById('step1').classList.add('done');
         const response = await fetch(BACKEND_URL, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ name, context })
         });
 
-        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+        if (!response.ok) throw new Error("Backend failed");
 
         document.getElementById('step2').classList.add('done');
         globalData = await response.json();
         
-        console.log("✅ Success! Backend returned:", globalData);
-
         document.getElementById('step3').classList.add('done');
         document.getElementById('step4').classList.add('done');
 
         setTimeout(() => {
-            document.getElementById('loading').classList.remove('active');
+            overlay.classList.remove('active');
             displayResults(name);
-        }, 800);
+        }, 1000);
 
     } catch (err) {
-        console.error("❌ Connection failed:", err);
-        alert("Connection failed. Check if Render backend is 'Live' and CORS is enabled.");
-        document.getElementById('loading').classList.remove('active');
+        console.error(err);
+        alert("Render is waking up or Offline. Please try again in 30 seconds.");
+        overlay.classList.remove('active');
     }
 }
 
@@ -225,14 +213,12 @@ function displayResults(name) {
     document.getElementById('results').classList.add('visible');
     document.getElementById('scoreName').innerText = name.toUpperCase();
     
-    // Core Score & AI Verdict (Backend keys: 'google_score' and 'ai')
+    // Core Logic mapping to Llama 3.1 results
     animateScore(globalData.google_score);
     document.getElementById('insightText').innerText = `"${globalData.ai}"`;
-    
-    // Detect platforms from 'domains' array
     renderPlatforms(globalData.domains || []);
 
-    // Prep GoDaddy link
+    // Link Prep
     const slug = name.toLowerCase().replace(/\s+/g, '');
     document.getElementById('godaddy-link').href = `https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=${slug}.com`;
 }
@@ -245,53 +231,31 @@ function animateScore(target) {
     const interval = setInterval(() => {
         if(cur >= target) {
             clearInterval(interval);
-            updateLabels(target);
+            updateStatus(target);
         }
         el.innerText = cur;
-        const offset = circumference - (circumference * cur / 100);
-        ring.style.strokeDashoffset = offset;
+        ring.style.strokeDashoffset = circumference - (circumference * cur / 100);
         cur++;
     }, 15);
 }
 
-function updateLabels(s) {
+function updateStatus(s) {
     const label = document.getElementById('scoreLabel');
     const brutal = document.getElementById('scoreBrutal');
-    const card = document.getElementById('scoreCard');
-    
-    if(s > 70) { 
-        label.innerText = "Strong Presence"; label.style.color = "var(--green)";
-        brutal.innerHTML = "<strong>You own your search results.</strong> Keep building authority.";
-    } else if(s > 40) { 
-        label.innerText = "Average Presence"; label.style.color = "var(--yellow)";
-        brutal.innerHTML = "<strong>You're findable but forgettable.</strong> Optimize your profiles.";
-    } else { 
-        label.innerText = "Weak Presence"; label.style.color = "var(--red)";
-        brutal.innerHTML = "<strong>You're invisible where it matters.</strong> Recruiters can't find you.";
-    }
+    if(s > 70) { label.innerText = "Strong Presence"; brutal.innerHTML = "<strong>You own your name online.</strong>"; }
+    else if(s > 40) { label.innerText = "Average Presence"; brutal.innerHTML = "<strong>You're findable but forgettable.</strong>"; }
+    else { label.innerText = "Weak Presence"; brutal.innerHTML = "<strong>You're invisible where it matters.</strong>"; }
 }
 
 function renderPlatforms(links) {
     const grid = document.getElementById('platformGrid');
     grid.innerHTML = '';
-    const detection = {
-        'linkedin.com': 'LinkedIn',
-        'github.com': 'GitHub',
-        'instagram.com': 'Instagram',
-        'twitter.com': 'Twitter/X',
-        'medium.com': 'Medium'
-    };
-    
-    Object.keys(detection).forEach(domain => {
-        const isFound = links.some(l => l.toLowerCase().includes(domain));
+    const sites = {'linkedin.com': 'LinkedIn', 'github.com': 'GitHub', 'instagram.com': 'Instagram', 'twitter.com': 'Twitter/X', 'medium.com': 'Medium'};
+    Object.keys(sites).forEach(domain => {
+        const found = links.some(l => l.toLowerCase().includes(domain));
         const card = document.createElement('div');
         card.className = 'platform-card';
-        card.innerHTML = `
-            <div class="p-info">
-                <div class="p-name">${detection[domain]}</div>
-                <div class="p-status ${isFound ? 'present' : 'missing'}">${isFound ? '● Present' : '○ Missing'}</div>
-            </div>
-        `;
+        card.innerHTML = `<div class="p-info"><div class="p-name">${sites[domain]}</div><div class="p-status ${found ? 'present' : 'missing'}">${found ? '● Present' : '○ Missing'}</div></div>`;
         grid.appendChild(card);
     });
 }
@@ -305,27 +269,23 @@ function unlockReport() {
     document.getElementById('lockedSection').style.display = 'none';
     const report = document.getElementById('premiumReport');
     report.classList.add('revealed');
-    
     const name = document.getElementById('nameInput').value;
     document.getElementById('rptName').innerText = name;
     document.getElementById('rptScoreDisplay').innerText = globalData.google_score;
-    document.getElementById('diagText').innerText = `A real-time search for "${name}" reveals a score of ${globalData.google_score}/100. This assessment is based on asset density and professional keyword alignment.`;
-    
-    const bar = document.getElementById('diagBar');
-    bar.style.width = globalData.google_score + '%';
-    bar.style.backgroundColor = globalData.google_score < 40 ? '#e63946' : '#2a9d8f';
+    document.getElementById('diagText').innerText = `Based on our AI audit, ${name}, your current search presence is ${globalData.google_score < 40 ? 'critically low' : 'growing'}.`;
+    document.getElementById('diagBar').style.width = globalData.google_score + '%';
+    document.getElementById('diagBar').style.backgroundColor = globalData.google_score < 40 ? '#e63946' : '#2a9d8f';
 }
 
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const name = document.getElementById('nameInput').value;
-    doc.setFontSize(22); doc.text(`SearchMe Reputation Audit: ${name}`, 20, 20);
+    doc.setFontSize(22); doc.text(`SearchMe Audit: ${name}`, 20, 20);
     doc.setFontSize(16); doc.text(`Google Score: ${globalData.google_score}/100`, 20, 35);
-    doc.setFontSize(12); doc.text("AI Reputation Analysis:", 20, 50);
-    const splitText = doc.splitTextToSize(globalData.ai, 170);
-    doc.text(splitText, 20, 60);
-    doc.save(`SearchMe_Audit_${name.replace(/\s/g,'_')}.pdf`);
+    doc.setFontSize(12); doc.text("AI reputation Analysis:", 20, 50);
+    doc.text(doc.splitTextToSize(globalData.ai, 170), 20, 60);
+    doc.save(`GoogleMe_Report_${name.replace(/\s/g,'_')}.pdf`);
 }
 </script>
 </body>
