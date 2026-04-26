@@ -30,7 +30,7 @@ def get_google_results(name: str, context: str):
                 "api_key": SERP_API_KEY,
                 "num": 15
             },
-            timeout=12
+            timeout=15
         )
         data = res.json()
 
@@ -54,7 +54,7 @@ def analyze_results(results):
         (r["title"] + " " + r["link"] + " " + r.get("snippet", "")).lower()
         for r in results
     ])
-
+    
     domains = [r["link"].lower() for r in results if r.get("link")]
 
     platforms = {
@@ -101,16 +101,15 @@ Name: {name}
 Google Score: {google_score}/100
 Layoff Risk: {layoff_risk}/100
 Platforms: {platforms}
+Search Results: {len(results)} results found.
 
-Search Results Summary: {len(results)} results found.
-
-Give a short, sharp, honest verdict (max 2-3 lines).
+Give short, sharp, honest verdict (2-4 lines max).
 """
     try:
         res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.1-8b-instant",   # ← As you wanted
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=180,
+            max_tokens=200,
             temperature=0.7
         )
         return res.choices[0].message.content.strip()
@@ -133,12 +132,11 @@ def analyze(data: Input):
         "platforms": platforms
     }
 
-# Simple home page
 @app.get("/", response_class=HTMLResponse)
 def home():
     return """
     <h1 style="text-align:center;margin-top:100px;font-family:Arial;">
-        ✅ Backend is Running<br><br>
+        ✅ Backend is Running Successfully<br><br>
         <small>POST to <code>/analyze</code> with {"name": "Your Name"}</small>
     </h1>
     """
