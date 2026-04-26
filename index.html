@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        /* ALL YOUR ORIGINAL STYLES PRESERVED - NO CHANGES TO UI/UX */
         :root { --bg: #f7f7f5; --white: #ffffff; --text: #0f0f0f; --muted: #6b6b6b; --border: #e4e4e0; --red: #e63946; --red-light: #fde8ea; --yellow: #f4a261; --yellow-light: #fef3e8; --green: #2a9d8f; --green-light: #e6f5f3; --accent: #1a1a2e; --accent2: #e63946; --blue: #3b82f6; --blue-light: #eff6ff; --purple: #7c3aed; --purple-light: #f5f3ff; --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04); --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04); --shadow-lg: 0 12px 48px rgba(0,0,0,0.12); --radius: 16px; --radius-sm: 10px; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
@@ -54,10 +53,9 @@
         .insight-block { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: var(--radius); padding: 32px; color: white; margin-bottom: 20px; position: relative; overflow: hidden; }
         .insight-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
         .insight-text { font-family: 'Syne', sans-serif; font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 700; line-height: 1.4; color: white; }
-        .locked-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative; }
-        .locked-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.8); backdrop-filter: blur(4px); }
-        .pay-btn { padding: 18px 24px; background: var(--accent2); color: white; border-radius: var(--radius-sm); border: none; font-weight: 800; cursor: pointer; }
-        .ipaid-btn { margin-top: 10px; display: none; color: var(--green); border: 1px solid var(--green); background: white; padding: 10px; border-radius: 8px; cursor: pointer; }
+        .locked-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative; padding: 40px; text-align: center; }
+        .pay-btn { padding: 18px 24px; background: var(--accent2); color: white; border-radius: var(--radius-sm); border: none; font-weight: 800; cursor: pointer; width: 100%; }
+        .ipaid-btn { margin-top: 10px; display: none; color: var(--green); border: 2px solid var(--green); background: white; padding: 15px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 700; }
         .ipaid-btn.show { display: block; }
         .loading-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(247,247,245,0.92); backdrop-filter: blur(8px); flex-direction: column; align-items: center; justify-content: center; }
         .loading-overlay.active { display: flex; }
@@ -89,11 +87,11 @@
     <div class="hero-card">
         <div class="input-group">
             <label>Full Name</label>
-            <input type="text" id="nameInput" placeholder="Elon Musk">
+            <input type="text" id="nameInput" placeholder="Dhrubojyoti Gangopadhyay">
         </div>
         <div class="input-group">
             <label>Profession (optional)</label>
-            <input type="text" id="profInput" placeholder="Tech CEO">
+            <input type="text" id="profInput" placeholder="Engineer">
         </div>
         <button class="cta-btn" id="checkBtn">Check My Score</button>
     </div>
@@ -121,10 +119,9 @@
     </div>
 
     <div class="locked-section" id="lockedSection">
-        <div class="locked-overlay">
-            <button class="pay-btn" id="payBtn">Unlock Full Audit — ₹9</button>
-            <button class="ipaid-btn" id="ipaidBtn">✓ I Paid — Unlock</button>
-        </div>
+        <div style="margin-bottom:20px; font-weight:700">6 Premium Insights Locked</div>
+        <button class="pay-btn" id="payBtn">Unlock Full Audit — ₹9</button>
+        <button class="ipaid-btn" id="ipaidBtn">✓ I Paid — Unlock</button>
     </div>
 
     <div id="premiumReport">
@@ -132,10 +129,11 @@
             <div id="rptName" style="font-weight:700">Name</div>
             <div id="rptScoreDisplay" style="font-size:3rem">0</div>
         </div>
-        <div style="background:white; padding:20px; border-radius:16px;">
-            <h3>AI Diagnosis</h3>
+        <div style="background:white; padding:32px; border-radius:16px; box-shadow: var(--shadow-md);">
+            <h3 style="margin-bottom:10px;">AI Diagnosis</h3>
             <div class="diag-score-bar"><div class="diag-score-fill" id="diagBar"></div></div>
-            <p id="diagText"></p>
+            <p id="diagText" style="line-height: 1.6; color: var(--muted)"></p>
+            <button class="cta-btn" id="downloadBtn" style="margin-top:20px;">Download PDF Report</button>
         </div>
     </div>
 </div>
