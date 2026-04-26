@@ -1,15 +1,18 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+import os
+import json
+import requests
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-import requests, os, re, json
-from dotenv import load_dotenv
+from pydantic import BaseModel
 from groq import Groq
+from dotenv import load_dotenv
 
+# 1. SETUP & CONFIG
 load_dotenv(".env", override=True)
+app = FastAPI(title="Google Me Score - Production")
 
-app = FastAPI(title="Google Me Score")
-
-# Fixes the connection between browser and Render
+# CORS remains enabled for safety, though relative paths will bypass it
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -18,67 +21,99 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Keys from Render Environment Variables
 SERP_API_KEY = os.getenv("SERPAPI_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=GROQ_API_KEY)
 
-class Input(BaseModel):
+class SearchInput(BaseModel):
     name: str
     context: str = ""
 
-def get_google_results(name: str, context: str):
+# 2. CORE LOGIC: GOOGLE SEARCH
+def fetch_serp_results(name, context):
     try:
         query = f"{name} {context}".strip()
-        res = requests.get(
-            "https://serpapi.com/search",
-            params={"engine": "google", "q": query, "api_key": SERP_API_KEY, "num": 15},
-            timeout=15
-        )
-        data = res.json()
-        if "error" in data:
+        # Using SerpApi for clean, structured data
+        params = {
+            "engine": "google",
+            "q": query,
+            "api_key": SERP_API_KEY,
+            "num": 10
+        }
+        response = requests.get("https://serpapi.com/search", params=params, timeout=10)
+        data = response.json()
+        
+        if "organic_results" not in data:
             return []
-        results = data.get("organic_results", [])
+            
         return [{
-            "title": item.get("title", ""),
             "link": item.get("link", ""),
             "snippet": item.get("snippet", "")
-        } for item in results[:12]]
+        } for item in data["organic_results"]]
     except Exception as e:
+        print(f"SERP Error: {e}")
         return []
 
-def deep_ai_analysis(name, results):
+# 3. CORE LOGIC: AI ANALYSIS (DEVIL'S ADVOCATE MODE)
+def analyze_with_ai(name, results):
     if not results:
-        return 20, "No digital footprint found. You are invisible to Google."
+        return 20, "You are a digital ghost. No meaningful footprint detected."
 
-    search_summary = "\n".join([
-        f"{i+1}. {r['title']} | {r['link']}\n   {r['snippet'][:250]}..."
-        for i, r in enumerate(results[:10])
-    ])
-
-    prompt = f"Name: {name}\nResults:\n{search_summary}\n\nReturn ONLY JSON: {{\"google_score\": <0-100>, \"verdict\": \"<brutal honesty>\"}}"
+    footprint = "\n".join([f"- {r['snippet']} ({r['link']})" for r in results])
+    
+    # Master Prompt with Devil's Advocate / Brutal Honesty update
+    system_prompt = (
+        "You are a brutal Digital Reputation Auditor and Devil's Advocate. "
+        "Do not sugarcoat. Fight with the results to find inconsistencies. "
+        "Your goal is to give the harshest, most realistic first impression a high-stakes recruiter would have."
+    )
+    
+    user_prompt = (
+        f"Name: {name}\n"
+        f"Search Results:\n{footprint}\n\n"
+        "Analyze the results above. Return ONLY a JSON object with two keys:\n"
+        "1. 'google_score': An integer (0-100) based on visibility, authority, and consistency.\n"
+        "2. 'verdict': A short, brutally honest paragraph analyzing their reputation.\n"
+        "Format: {\"google_score\": 45, \"verdict\": \"...\"}"
+    )
 
     try:
-        res = client.chat.completions.create(
+        completion = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}],
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
             response_format={"type": "json_object"}
         )
-        data = json.loads(res.choices[0].message.content)
-        return int(data.get("google_score", 50)), data.get("verdict", "No verdict.")
-    except:
-        return 50, "AI Analysis failed."
+        data = json.loads(completion.choices[0].message.content)
+        return data.get("google_score", 50), data.get("verdict", "Analysis inconclusive.")
+    except Exception as e:
+        print(f"AI Error: {e}")
+        return 50, "AI Analysis encountered a glitch."
 
+# 4. ENDPOINTS
 @app.post("/analyze")
-async def analyze(data: Input):
-    results = get_google_results(data.name, data.context)
-    score, verdict = deep_ai_analysis(data.name, results)
-    domains = [r["link"] for r in results if r.get("link")]
+async def handle_analyze(data: SearchInput):
+    results = fetch_serp_results(data.name, data.context)
+    score, verdict = analyze_with_ai(data.name, results)
+    
     return {
         "google_score": score,
         "ai": verdict,
-        "domains": domains
+        "domains": [r["link"] for r in results]
     }
 
+# 5. FRONTEND SERVING (The All-In-One Fix)
 @app.get("/")
-def home():
+async def serve_frontend():
+    # This serves your index.html directly from the root folder
+    if os.path.exists("index.html"):
+        return FileResponse("index.html")
+    return {"error": "index.html not found in root directory"}
+
+# For health checks
+@app.get("/health")
+async def health():
     return {"status": "online"}
