@@ -4,6 +4,7 @@ from fastapi.responses import HTMLResponse
 import requests, os
 from dotenv import load_dotenv
 from groq import Groq
+from urllib.parse import urlparse  # ✅ NEW
 
 load_dotenv()
 
@@ -39,7 +40,6 @@ def get_google_results(name, context):
         res = requests.get(url, params=params, timeout=10)
         data = res.json()
 
-        # DEBUG
         print("SERP RAW:", data)
 
         if "error" in data:
@@ -61,14 +61,17 @@ def get_google_results(name, context):
 # ---------------- ANALYSIS ----------------
 def analyze_results(results):
     links = [r["link"] for r in results]
-    domains = " ".join(links)
 
+    # ✅ FIXED DOMAIN EXTRACTION
+    domains = [urlparse(link).netloc.lower() for link in links]
+
+    # ✅ FIXED PLATFORM DETECTION
     platforms = {
-        "LinkedIn": 1 if "linkedin.com" in domains else 0,
-        "GitHub": 1 if "github.com" in domains else 0,
-        "Twitter/X": 1 if ("twitter.com" in domains or "x.com" in domains) else 0,
-        "Instagram": 1 if "instagram.com" in domains else 0,
-        "YouTube": 1 if "youtube.com" in domains else 0,
+        "LinkedIn": 1 if any("linkedin.com" in d for d in domains) else 0,
+        "GitHub": 1 if any("github.com" in d for d in domains) else 0,
+        "Twitter/X": 1 if any(("twitter.com" in d or "x.com" in d) for d in domains) else 0,
+        "Instagram": 1 if any("instagram.com" in d for d in domains) else 0,
+        "YouTube": 1 if any("youtube.com" in d for d in domains) else 0,
     }
 
     results_count = len(results)
@@ -129,7 +132,7 @@ Tone:
 
     try:
         res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",  # ✅ WORKING MODEL
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=200
         )
