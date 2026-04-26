@@ -29,6 +29,7 @@ def get_google_results(name, context):
     try:
         query = f"{name} {context}".strip()
         url = "https://serpapi.com/search"
+
         params = {
             "engine": "google",
             "q": query,
@@ -38,10 +39,9 @@ def get_google_results(name, context):
         res = requests.get(url, params=params, timeout=10)
         data = res.json()
 
-        # 🔴 DEBUG (see in Render logs)
+        # DEBUG
         print("SERP RAW:", data)
 
-        # Handle API errors
         if "error" in data:
             print("SERP ERROR:", data["error"])
             return []
@@ -81,7 +81,6 @@ def analyze_results(results):
     google_score += 10 if platforms["Instagram"] else 0
     google_score += 10 if platforms["YouTube"] else 0
     google_score += min(results_count * 5, 25)
-
     google_score = min(google_score, 100)
 
     # LAYOFF RISK
@@ -130,7 +129,7 @@ Tone:
 
     try:
         res = client.chat.completions.create(
-            model="llama-3.1-70b-versatile",
+            model="llama-3.1-8b-instant",  # ✅ WORKING MODEL
             messages=[{"role": "user", "content": prompt}],
             max_tokens=200
         )
