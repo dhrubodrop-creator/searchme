@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
-import requests, os
+import requests, os, re, json
 from dotenv import load_dotenv
 from groq import Groq
 
@@ -11,7 +11,6 @@ app = FastAPI(title="Google Me Score")
 
 SERP_API_KEY = os.getenv("SERPAPI_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-
 client = Groq(api_key=GROQ_API_KEY)
 
 class Input(BaseModel):
@@ -41,64 +40,66 @@ def get_google_results(name: str, context: str):
         print("SERP FAIL:", e)
         return []
 
-# ================== DEEP AI ANALYSIS ==================
+# ================== DEEP AI ANALYSIS (REAL SCORE) ==================
 def deep_ai_analysis(name, results):
     search_summary = "\n".join([
-        f"{i+1}. {r['title']} | {r['link']}\n   {r['snippet'][:200]}..."
+        f"{i+1}. {r['title']} | {r['link']}\n   {r['snippet'][:250]}..."
         for i, r in enumerate(results[:10])
     ])
 
     prompt = f"""
-You are an expert digital reputation analyst.
-Analyze the search results for {name} deeply.
+You are a brutally honest career reputation analyst.
+Name: {name}
 
 SEARCH RESULTS:
 {search_summary}
 
-TASK:
-1. Evaluate the overall online reputation and visibility.
-2. Identify key strengths and weaknesses.
-3. Check for professional signals (LinkedIn activity, content, authority mentions, etc.).
-4. Give a realistic Google Presence Score (0-100) with reasoning.
-5. Write a brutally honest short verdict (2-4 lines).
-
-Be very detailed and critical.
+Return ONLY valid JSON in this exact format:
+{{
+  "google_score": <number between 0 and 100>,
+  "verdict": "<short, sharp, brutally honest verdict - 2 to 4 lines max>"
+}}
+Be realistic and critical based on the actual search results.
 """
 
     try:
         res = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=400,
+            max_tokens=600,
             temperature=0.7
         )
-        return res.choices[0].message.content.strip()
+        content = res.choices[0].message.content.strip()
+
+        # Extract JSON
+        json_match = re.search(r'\{.*\}', content, re.DOTALL)
+        if json_match:
+            data = json.loads(json_match.group())
+            score = int(data.get("google_score", 50))
+            verdict = data.get("verdict", "Analysis unavailable.")
+            return score, verdict
     except Exception as e:
         print("Deep AI Error:", e)
-        return "Deep analysis temporarily unavailable."
+
+    return 50, "Deep analysis temporarily unavailable."
 
 # ================== MAIN ENDPOINT ==================
 @app.post("/analyze")
 def analyze(data: Input):
     results = get_google_results(data.name, data.context)
+    google_score, ai_verdict = deep_ai_analysis(data.name, results)
     
-    # Deep AI research on all results
-    ai = deep_ai_analysis(data.name, results)
-
-    # Basic score (kept for compatibility)
-    google_score = 55
-    layoff_risk = 60
     domains = [r["link"] for r in results if r.get("link")]
 
     return {
         "google_score": google_score,
-        "layoff_risk": layoff_risk,
-        "ai": ai,
+        "layoff_risk": 100 - google_score,
+        "ai": ai_verdict,
         "domains": domains
     }
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/")
 def home():
-    return "<h1>✅ Backend Running - Deep AI Analysis Active</h1>"
+    return "<h1>✅ Backend is Running - Deep AI Active</h1>"
 
-print("🚀 Google Me Score Backend with Deep AI Ready!")
+print("🚀 Google Me Score Backend Ready!")
