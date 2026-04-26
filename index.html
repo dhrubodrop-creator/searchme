@@ -3,268 +3,1420 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Google Me Score – What Does Google Say About You?</title>
+<title>Google Me Score — Know Your Digital Footprint</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
-    --bg: #f7f7f5; --white: #ffffff; --text: #0f0f0f; --muted: #6b6b6b; --border: #e4e4e0;
-    --red: #e63946; --red-light: #fde8ea; --yellow: #f4a261; --yellow-light: #fef3e8;
-    --green: #2a9d8f; --green-light: #e6f5f3; --accent: #1a1a2e; --accent2: #e63946;
-    --blue: #3b82f6; --blue-light: #eff6ff; --purple: #7c3aed; --purple-light: #f5f3ff;
-    --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-    --radius: 16px; --radius-sm: 10px;
+    --cream: #faf8f4;
+    --warm-white: #fffefb;
+    --ink: #1a1614;
+    --ink-light: #4a4540;
+    --ink-muted: #9a9490;
+    --accent: #d4380d;
+    --accent-light: #ff6b3d;
+    --accent-pale: #fff2ee;
+    --gold: #c9a84c;
+    --gold-pale: #fdf8ed;
+    --green: #1a7f5a;
+    --green-pale: #edfaf4;
+    --border: #e8e4dc;
+    --shadow-sm: 0 2px 8px rgba(26,22,20,0.06);
+    --shadow-md: 0 8px 32px rgba(26,22,20,0.10);
+    --shadow-lg: 0 24px 64px rgba(26,22,20,0.14);
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
-  /* All your original CSS is kept intact below */
-  nav { position:sticky; top:0; z-index:100; background:rgba(247,247,245,0.88); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:0 24px; height:60px; display:flex; align-items:center; justify-content:space-between; }
-  .nav-logo { font-family:'Syne',sans-serif; font-weight:800; font-size:1.1rem; display:flex; align-items:center; gap:8px; }
-  .nav-logo span { color:var(--accent2); }
-  .hero { min-height:92vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 24px 48px; text-align:center; position:relative; overflow:hidden; }
-  h1 { font-family:'Syne',sans-serif; font-size:clamp(2.2rem,6vw,4.2rem); font-weight:800; line-height:1.08; letter-spacing:-0.03em; }
-  h1 em { color:var(--accent2); }
-  .cta-btn { width:100%; margin-top:8px; padding:16px 24px; background:var(--text); color:white; font-family:'Syne',sans-serif; font-size:1.05rem; font-weight:700; border:none; border-radius:var(--radius-sm); cursor:pointer; }
-  #results { display:none; max-width:720px; margin:0 auto; padding:0 24px 80px; }
-  #results.visible { display:block; }
-  .score-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:40px 32px; text-align:center; box-shadow:var(--shadow-md); }
-  .platform-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin-bottom:20px; }
-  .platform-card { background:var(--white); border:1px solid var(--border); border-radius:var(--radius-sm); padding:18px 16px; display:flex; align-items:center; gap:14px; box-shadow:var(--shadow-sm); }
-  .insight-block { background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%); border-radius:var(--radius); padding:32px; color:white; margin-bottom:20px; }
-  .locked-section, .report-section { background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin-bottom:20px; box-shadow:var(--shadow-md); overflow:hidden; }
-  .callout { border-radius:var(--radius-sm); padding:14px 16px; margin:12px 0; display:flex; gap:10px; }
-  .callout.red { background:var(--red-light); border-left:3px solid var(--red); }
-  .callout.yellow { background:var(--yellow-light); border-left:3px solid var(--yellow); }
-  .callout.green { background:var(--green-light); border-left:3px solid var(--green); }
-  .tip-card, .opp-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; margin-bottom:12px; }
-  .domain-box { background:linear-gradient(135deg,#f8faff 0%,#f0f4ff 100%); border:1.5px solid #c7d7fd; border-radius:var(--radius-sm); padding:16px 20px; margin-top:12px; display:flex; align-items:center; justify-content:space-between; }
-  .domain-name { font-family:'Syne',sans-serif; font-size:1.1rem; font-weight:700; color:var(--blue); }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NOISE TEXTURE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-bg-circle:nth-child(1) {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(212,56,13,0.07) 0%, transparent 70%);
+    top: -100px; right: -100px;
+    animation: float1 8s ease-in-out infinite;
+  }
+  .hero-bg-circle:nth-child(2) {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    bottom: -80px; left: -80px;
+    animation: float2 10s ease-in-out infinite;
+  }
+
+  @keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-20px,20px)} }
+  @keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(20px,-20px)} }
+
+  .hero-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-pale);
+    border: 1px solid rgba(212,56,13,0.15);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 28px;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 8vw, 64px);
+    font-weight: 900;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-sub {
+    color: var(--ink-light);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-bottom: 44px;
+    font-weight: 400;
+  }
+
+  .card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 36px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .input-group {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .input-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+    padding-left: 4px;
+  }
+  .inp {
+    width: 100%;
+    padding: 16px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  .inp::placeholder { color: var(--ink-muted); }
+  .inp:focus {
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(212,56,13,0.08);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 18px 32px;
+    background: var(--ink);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .btn-primary:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(212,56,13,0.3);
+  }
+  .btn-primary:active { transform: translateY(0); }
+
+  .trust-strip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-weight: 500;
+  }
+
+  /* ── LOADER ── */
+  #loader {
+    display: none;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 32px;
+    padding: 40px 20px;
+  }
+  .loader-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--ink);
+    text-align: center;
+  }
+  .loader-sub {
+    color: var(--ink-muted);
+    text-align: center;
+    font-size: 15px;
+  }
+  .loader-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 360px;
+  }
+  .loader-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px;
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    transition: all 0.4s;
+    opacity: 0.4;
+  }
+  .loader-step.active {
+    opacity: 1;
+    border-color: var(--accent);
+    color: var(--ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .loader-step.done { opacity: 1; color: var(--green); border-color: rgba(26,127,90,0.3); background: var(--green-pale); }
+  .step-icon { font-size: 18px; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── RESULTS ── */
+  #results {
+    display: none;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+
+  .section-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+
+  /* Score Card */
+  .score-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    padding: 48px 40px;
+    text-align: center;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,56,13,0.05) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .score-name-tag {
+    display: inline-block;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 32px;
+  }
+  .ring-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 32px;
+  }
+  .ring-wrap svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .ring-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .ring-denom {
+    font-size: 14px;
+    color: var(--ink-muted);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .score-label {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  .score-snippet {
+    color: var(--ink-light);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .score-meta-row {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .score-meta-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 8px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-light);
+  }
+
+  /* Platforms */
+  .platforms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .platform-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .platform-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .platform-favicon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .platform-name { font-weight: 600; font-size: 14px; color: var(--ink); flex: 1; }
+  .platform-score {
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .platform-score.pos { color: var(--green); }
+  .platform-score.neg { color: var(--ink-muted); }
+
+  /* AI Summary */
+  .ai-card {
+    background: linear-gradient(135deg, #fffefb 0%, #f8f4ff 100%);
+    border: 1px solid rgba(139,92,246,0.15);
+    border-radius: 24px;
+    padding: 36px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-card::before {
+    content: '✦';
+    position: absolute;
+    top: 20px; right: 24px;
+    font-size: 40px;
+    color: rgba(139,92,246,0.08);
+    line-height: 1;
+  }
+  .ai-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .ai-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(139,92,246,0.1);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7c3aed;
+  }
+  .ai-summary-text {
+    color: var(--ink-light);
+    font-size: 15px;
+    line-height: 1.8;
+    font-weight: 400;
+  }
+
+  /* Domains */
+  .domains-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .domain-card {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .domain-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+    border-color: rgba(212,56,13,0.2);
+  }
+  .domain-card:hover::after {
+    content: '↗';
+    position: absolute;
+    top: 14px; right: 16px;
+    font-size: 14px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .domain-favicon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .domain-host { font-weight: 600; font-size: 14px; }
+  .domain-sub { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
+
+  /* Reputation Insight */
+  .insight-card {
+    background: var(--ink);
+    color: #fff;
+    border-radius: 24px;
+    padding: 36px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight-card::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(212,56,13,0.4) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .insight-card h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 14px;
+  }
+  .insight-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: rgba(255,255,255,0.75);
+  }
+  .insight-tags {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .insight-tag {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+  }
+
+  /* Premium Locked */
+  .premium-section {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 32px;
+  }
+  .premium-header {
+    background: linear-gradient(135deg, #1a1614 0%, #2d2520 100%);
+    padding: 36px 40px;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .premium-header::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(201,168,76,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .premium-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201,168,76,0.2);
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+  }
+  .premium-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .premium-header p {
+    color: rgba(255,255,255,0.65);
+    font-size: 15px;
+  }
+  .premium-features {
+    padding: 36px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    position: relative;
+  }
+  .premium-features::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(6px);
+    background: rgba(250,248,244,0.7);
+    border-radius: 0 0 32px 32px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+  }
+  .feature-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .feature-name { font-weight: 600; font-size: 14px; color: var(--ink); }
+  .feature-desc { font-size: 12px; color: var(--ink-muted); margin-top: 3px; line-height: 1.4; }
+  .premium-cta {
+    padding: 0 40px 40px;
+    text-align: center;
+    position: relative;
+    z-index: 3;
+  }
+  .btn-unlock {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 20px 44px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-unlock::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .btn-unlock:hover {
+    background: #b83009;
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(212,56,13,0.4);
+  }
+  .price-badge {
+    background: rgba(255,255,255,0.2);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 14px;
+    font-weight: 800;
+  }
+  .btn-ipaid {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    background: none;
+    border: 1.5px solid var(--green);
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: none;
+  }
+  .btn-ipaid:hover { background: var(--green-pale); }
+  .security-note {
+    color: var(--ink-muted);
+    font-size: 12px;
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  /* Premium Report */
+  #premiumReport { display: none; }
+  .premium-report-section {
+    background: var(--warm-white);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+  .report-section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .report-content {
+    color: var(--ink-light);
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .action-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .action-step:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px;
+    background: var(--accent-pale);
+    border: 1px solid rgba(212,56,13,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--accent);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* PDF Button */
+  .pdf-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--warm-white);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .pdf-btn:hover { box-shadow: var(--shadow-sm); border-color: var(--ink); }
+
+  /* Risk Meter */
+  .risk-bar-bg {
+    height: 8px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+    margin: 12px 0;
+  }
+  .risk-bar-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1s ease;
+  }
+
+  /* Animate in */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.5s ease forwards; }
+  .delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .delay-2 { animation-delay: 0.2s; opacity: 0; }
+  .delay-3 { animation-delay: 0.3s; opacity: 0; }
+  .delay-4 { animation-delay: 0.4s; opacity: 0; }
+  .delay-5 { animation-delay: 0.5s; opacity: 0; }
+  .delay-6 { animation-delay: 0.6s; opacity: 0; }
+
+  @media (max-width: 600px) {
+    .premium-features { grid-template-columns: 1fr; }
+    .premium-header, .premium-features, .premium-cta { padding-left: 24px; padding-right: 24px; }
+    .score-card { padding: 36px 24px; }
+    .ai-card { padding: 28px 24px; }
+    .insight-card { padding: 28px 24px; }
+    .domains-grid { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
 
-<nav>
-  <div class="nav-logo"><span>G</span>oogle Me Score</div>
-  <div class="nav-badge">🔒 ₹9 UNLOCK</div>
-</nav>
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <div class="hero-bg-circle"></div>
+  <div class="hero-bg-circle"></div>
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="eyebrow-dot"></span> Digital Reputation Intelligence</div>
+    <h1 class="hero-title">What does<br>Google say<br>about <em>you?</em></h1>
+    <p class="hero-sub">Discover your online presence score, what people find when they search your name, and how to control your digital narrative.</p>
 
-<div class="loading-overlay" id="loading">
-  <div class="loading-spinner"></div>
-  <div class="loading-text" id="loading-name">Scanning your presence...</div>
-  <div class="loading-sub">Checking platforms in real time</div>
-  <div class="loading-steps">
-    <div class="loading-step" id="step1">Scanning Google Search results</div>
-    <div class="loading-step" id="step2">Checking LinkedIn visibility</div>
-    <div class="loading-step" id="step3">Analyzing social footprint</div>
-    <div class="loading-step" id="step4">Calculating reputation score</div>
-  </div>
-</div>
-
-<section class="hero" id="hero">
-  <div class="hero-eyebrow"><div class="dot"></div>1,247 people checked their score today</div>
-  <h1>What does<br>Google say<br>about <em>you?</em></h1>
-  <p class="hero-sub">People judge you in seconds. See your real first impression — before a recruiter, client, or date does.</p>
-  <div class="hero-card">
-    <div class="input-group"><label>Your Full Name</label><input type="text" id="nameInput" placeholder="e.g. Arjun Sharma"></div>
-    <div class="input-group"><label>Profession <span style="font-weight:400">(optional)</span></label><input type="text" id="profInput" placeholder="e.g. Software Engineer"></div>
-    <button class="cta-btn" onclick="checkScore()">Check My Score →</button>
+    <div class="card">
+      <div class="input-group">
+        <label class="input-label">Your Full Name</label>
+        <input id="nameInput" type="text" placeholder="e.g. Rahul Sharma" class="inp" onkeydown="if(event.key==='Enter')checkScore()">
+      </div>
+      <div class="input-group" style="margin-bottom:24px;">
+        <label class="input-label">Profession <span style="font-weight:400;letter-spacing:0">(optional)</span></label>
+        <input id="profInput" type="text" placeholder="e.g. Software Engineer, Founder" class="inp" onkeydown="if(event.key==='Enter')checkScore()">
+      </div>
+      <button class="btn-primary" onclick="checkScore()">
+        <span id="btnText">🔍 Analyse My Digital Presence</span>
+      </button>
+      <div class="trust-strip">
+        <div class="trust-item">🔒 Private & Secure</div>
+        <div class="trust-item">⚡ Instant Results</div>
+        <div class="trust-item">🌐 100+ Sources</div>
+      </div>
+    </div>
   </div>
 </section>
 
-<div id="results">
-  <div class="score-card" id="scoreCard">
-    <div class="score-name" id="scoreName">YOUR NAME</div>
-    <div class="score-ring">
-      <svg viewBox="0 0 160 160" width="160" height="160">
-        <circle class="ring-bg" cx="80" cy="80" r="70"/>
-        <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="70" stroke-dasharray="439.8" stroke-dashoffset="439.8"/>
+<!-- LOADER -->
+<section id="loader">
+  <div class="spinner"></div>
+  <div>
+    <div class="loader-title" id="loaderName">Scanning the web…</div>
+    <div class="loader-sub">This usually takes 10–20 seconds</div>
+  </div>
+  <div class="loader-steps">
+    <div class="loader-step" id="step1"><span class="step-icon">🌐</span> Crawling Google results</div>
+    <div class="loader-step" id="step2"><span class="step-icon">📊</span> Analysing platform presence</div>
+    <div class="loader-step" id="step3"><span class="step-icon">🤖</span> Running AI reputation scan</div>
+    <div class="loader-step" id="step4"><span class="step-icon">📝</span> Building your score card</div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section id="results">
+
+  <!-- Score Card -->
+  <div class="score-card fade-up delay-1" id="scoreCard">
+    <div class="score-name-tag" id="scoreName"></div>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="110" cy="110" r="95" fill="none" stroke="#e8e4dc" stroke-width="14"/>
+        <circle id="ringFill" cx="110" cy="110" r="95" fill="none" stroke="#d4380d" stroke-width="14"
+                stroke-dasharray="596.9" stroke-dashoffset="596.9"
+                stroke-linecap="round" style="transition:stroke-dashoffset 1.8s cubic-bezier(0.4,0,0.2,1);"/>
       </svg>
-      <div><div class="score-num"><span id="scoreNum">0</span><span class="score-denom">/100</span></div></div>
+      <div class="ring-center">
+        <div class="ring-number" id="scoreNum">0</div>
+        <div class="ring-denom">/100</div>
+      </div>
     </div>
-    <div class="score-label" id="scoreLabel">Weak Presence</div>
-    <div class="score-brutal" id="scoreBrutal"></div>
+    <div class="score-label" id="scoreLabel"></div>
+    <div class="score-snippet" id="scoreBrief"></div>
+    <div class="score-meta-row">
+      <div class="score-meta-pill" id="metaPlatforms">📡 0 platforms found</div>
+      <div class="score-meta-pill" id="metaDomains">🔗 0 online mentions</div>
+      <div class="score-meta-pill" id="metaRisk">⚠️ Risk: Calculating…</div>
+    </div>
   </div>
 
-  <p class="section-title">Platform Breakdown</p>
-  <div class="platform-grid" id="platformGrid"></div>
-
-  <div class="insight-block">
-    <div class="insight-tag">Reputation Insight</div>
-    <div class="insight-text" id="insightText"></div>
-    <div class="insight-sub" id="insightSub"></div>
+  <!-- Platform Breakdown -->
+  <div class="fade-up delay-2">
+    <div class="section-eyebrow">Platform Breakdown</div>
+    <div class="section-title">Where you exist online</div>
+    <div class="platforms-grid" id="platformsGrid"></div>
   </div>
 
-  <!-- Locked Section -->
-  <div class="locked-section" id="lockedSection"> ... (your original locked UI) ... </div>
+  <!-- AI Summary -->
+  <div class="fade-up delay-3">
+    <div class="ai-card">
+      <div class="ai-card-header">
+        <div class="ai-badge">🤖 AI Analysis</div>
+        <span style="font-size:13px;color:var(--ink-muted);font-weight:500;">Powered by Claude</span>
+      </div>
+      <div class="ai-summary-text" id="aiSummary"></div>
+    </div>
+  </div>
 
-  <!-- Premium Report -->
-  <div id="premiumReport"></div>
-</div>
+  <!-- Key Online Appearances -->
+  <div class="fade-up delay-4">
+    <div class="section-eyebrow">Online Appearances</div>
+    <div class="section-title">Key places you appear</div>
+    <div class="domains-grid" id="domainsGrid"></div>
+  </div>
 
-<footer>© 2025 Google Me Score · Not affiliated with Google</footer>
+  <!-- Reputation Insight -->
+  <div class="insight-card fade-up delay-5" id="insightCard">
+    <h3>Reputation Snapshot</h3>
+    <p id="insightText"></p>
+    <div class="insight-tags" id="insightTags"></div>
+  </div>
+
+  <!-- Locked Premium Section -->
+  <div class="premium-section fade-up delay-6" id="lockedSection">
+    <div class="premium-header">
+      <div class="premium-badge">✦ Premium Report</div>
+      <h3>Your Full Reputation Report</h3>
+      <p>Deep analysis, action plan & strategies to dominate your search results</p>
+    </div>
+    <div class="premium-features">
+      <div class="feature-item">
+        <div class="feature-icon">🔬</div>
+        <div><div class="feature-name">Reputation Diagnosis</div><div class="feature-desc">Why your score is what it is</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">👁️</div>
+        <div><div class="feature-name">First Impression Analysis</div><div class="feature-desc">What people see when they Google you</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💼</div>
+        <div><div class="feature-name">LinkedIn Optimisation</div><div class="feature-desc">Exact tips to improve your profile</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔍</div>
+        <div><div class="feature-name">Search Visibility Strategy</div><div class="feature-desc">How to control what Google shows</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📅</div>
+        <div><div class="feature-name">90-Day Action Plan</div><div class="feature-desc">Week-by-week growth roadmap</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💎</div>
+        <div><div class="feature-name">Hidden Opportunities</div><div class="feature-desc">Platforms you're missing out on</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <div><div class="feature-name">Reputation Risk Score</div><div class="feature-desc">Red flags & how to fix them</div></div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📄</div>
+        <div><div class="feature-name">PDF Download</div><div class="feature-desc">Full report to keep & share</div></div>
+      </div>
+    </div>
+    <div class="premium-cta">
+      <button class="btn-unlock" onclick="handlePayment()">
+        Unlock Full Report <span class="price-badge">₹9</span>
+      </button>
+      <br>
+      <button class="btn-ipaid" id="ipaidBtn" onclick="unlockReport()">✓ I have paid — Unlock now</button>
+      <div class="security-note">🔒 Secure payment via Razorpay · One-time · No subscription</div>
+    </div>
+  </div>
+
+  <!-- Premium Report (hidden until paid) -->
+  <div id="premiumReport">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--ink);margin-bottom:8px;">Your Full Report</div>
+      <div style="color:var(--ink-muted);font-size:15px;">Personalized digital reputation analysis</div>
+    </div>
+
+    <div class="premium-report-section" id="diagnosisSection">
+      <div class="report-section-title">🔬 Reputation Diagnosis</div>
+      <div class="report-content" id="diagnosisContent"></div>
+    </div>
+
+    <div class="premium-report-section" id="impressionSection">
+      <div class="report-section-title">👁️ First Impression Analysis</div>
+      <div class="report-content" id="impressionContent"></div>
+    </div>
+
+    <div class="premium-report-section" id="linkedinSection">
+      <div class="report-section-title">💼 LinkedIn Optimisation Tips</div>
+      <div class="report-content" id="linkedinContent"></div>
+    </div>
+
+    <div class="premium-report-section" id="strategySection">
+      <div class="report-section-title">🔍 Search Visibility Strategy</div>
+      <div class="report-content" id="strategyContent"></div>
+    </div>
+
+    <div class="premium-report-section" id="actionPlanSection">
+      <div class="report-section-title">📅 90-Day Action Plan</div>
+      <div id="actionPlanContent"></div>
+    </div>
+
+    <div class="premium-report-section" id="opportunitiesSection">
+      <div class="report-section-title">💎 Hidden Opportunities</div>
+      <div class="report-content" id="opportunitiesContent"></div>
+    </div>
+
+    <div class="premium-report-section" id="riskSection">
+      <div class="report-section-title">⚡ Reputation Risk Score</div>
+      <div id="riskContent"></div>
+    </div>
+
+    <div style="text-align:center;padding:20px 0 40px;">
+      <button class="pdf-btn" onclick="downloadPDF()">📄 Download PDF Report</button>
+    </div>
+  </div>
+
+</section>
 
 <script>
 const API_PATH = "/analyze";
-let _name = '', _prof = '', _score = 0, _band = 'low', _platforms = [], _fullData = null;
+let _name = "", _prof = "", _score = 0, _data = null;
 
-function getScoreBand(s) { return s < 40 ? 'low' : s < 70 ? 'mid' : 'high'; }
-
-function animateScore(target) {
-  const el = document.getElementById('scoreNum');
-  const ring = document.getElementById('ringFill');
-  const circumference = 439.8;
-  const duration = 1600, start = performance.now();
-  function step(now) {
-    const p = Math.min((now - start) / duration, 1);
-    const e = 1 - Math.pow(1 - p, 3);
-    const cur = Math.round(e * target);
-    el.textContent = cur;
-    ring.style.strokeDashoffset = circumference - (circumference * cur / 100);
-    if (p < 1) requestAnimationFrame(step);
+// ── LOADER ANIMATION ──
+let stepTimeout;
+function animateLoader() {
+  const steps = ['step1','step2','step3','step4'];
+  let i = 0;
+  function nextStep() {
+    if (i > 0) { document.getElementById(steps[i-1]).className = 'loader-step done'; }
+    if (i < steps.length) {
+      document.getElementById(steps[i]).className = 'loader-step active';
+      i++;
+      stepTimeout = setTimeout(nextStep, 3500);
+    }
   }
-  requestAnimationFrame(step);
+  nextStep();
 }
 
-function renderPlatforms(platforms) {
-  const grid = document.getElementById('platformGrid');
-  grid.innerHTML = '';
-  platforms.forEach((p,i) => {
-    const domain = p.domain || p.name.toLowerCase().replace(/ /g,'') + '.com';
-    const card = document.createElement('div');
-    card.className = 'platform-card';
-    card.style.animationDelay = (i*0.07)+'s';
-    card.innerHTML = `
-      <div class="p-icon" style="background:#f8f9fa">
-        <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64" width="28" height="28" style="border-radius:6px;" onerror="this.style.display='none';this.parentElement.innerHTML='🔗';">
-      </div>
-      <div class="p-info">
-        <div class="p-name">${p.name}</div>
-        <div class="p-status ${p.status || (p.score>0?'present':'missing')}">${(p.status==='present'||p.score>0)?'● Present':'○ Missing'}</div>
-      </div>
-      <div class="p-score" style="color:${p.score>0?'var(--green)':'var(--red)'}">${p.score>0? '+'+p.score:'—'}</div>
-    `;
-    grid.appendChild(card);
+function resetLoader() {
+  clearTimeout(stepTimeout);
+  ['step1','step2','step3','step4'].forEach(id => {
+    document.getElementById(id).className = 'loader-step';
   });
 }
 
+// ── MAIN CHECK ──
 async function checkScore() {
   _name = document.getElementById('nameInput').value.trim();
   _prof = document.getElementById('profInput').value.trim();
-  if(!_name) return alert("Please enter your name");
+  if (!_name) { alert('Please enter your name'); return; }
 
-  const overlay = document.getElementById('loading');
-  overlay.classList.add('active');
+  // Show loader
+  document.getElementById('heroSection').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  const loader = document.getElementById('loader');
+  loader.style.display = 'flex';
+  document.getElementById('loaderName').textContent = `Scanning for "${_name}"…`;
+  animateLoader();
 
   try {
     const res = await fetch(API_PATH, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({name: _name, profession: _prof})
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: _name, profession: _prof })
     });
-    const data = await res.json();
-    _fullData = data;
-    _score = parseInt(data.google_score) || 45;
-
-    document.getElementById('hero').style.display = 'none';
-    const results = document.getElementById('results');
-    results.classList.add('visible');
-    results.scrollIntoView({behavior:'smooth'});
-
-    setScoreUI(_score, _name, _prof, data.ai);
-    renderPlatforms(data.platforms || []);
-    _platforms = data.platforms || [];
+    _data = await res.json();
+    _score = parseInt(_data.google_score) || 42;
+    
+    resetLoader();
+    loader.style.display = 'none';
+    renderResults();
   } catch(e) {
     console.error(e);
-  } finally {
-    overlay.classList.remove('active');
+    resetLoader();
+    loader.style.display = 'none';
+    document.getElementById('heroSection').style.display = 'flex';
+    alert('Could not reach the analysis server. Please check your backend and try again.');
   }
 }
 
-function setScoreUI(score, name, prof, verdict) {
-  _score = score;
-  _band = getScoreBand(score);
-  const color = _band==='low'?'var(--red)':_band==='mid'?'var(--yellow)':'var(--green)';
-  document.getElementById('scoreCard').style.setProperty('--score-color', color);
-  document.getElementById('ringFill').style.stroke = color;
-  document.getElementById('scoreName').textContent = name.toUpperCase() + (prof?` • ${prof.toUpperCase()}`:'');
-  document.getElementById('scoreLabel').textContent = _band==='low'?'Weak Presence':_band==='mid'?'Average Presence':'Strong Presence';
-  document.getElementById('scoreBrutal').innerHTML = verdict ? `<strong>${verdict.substring(0,120)}...</strong>` : `<strong>You're being overlooked online.</strong>`;
-  document.getElementById('insightText').textContent = verdict ? `"${verdict.substring(0,80)}..."` : "You exist online. But you don't show up where it matters.";
-  animateScore(score);
+// ── RENDER ──
+function renderResults() {
+  const results = document.getElementById('results');
+  results.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // Score card
+  document.getElementById('scoreName').textContent = _name.toUpperCase();
+
+  // Animate number
+  let current = 0;
+  const target = _score;
+  const step = target / 60;
+  const interval = setInterval(() => {
+    current = Math.min(current + step, target);
+    document.getElementById('scoreNum').textContent = Math.round(current);
+    if (current >= target) clearInterval(interval);
+  }, 16);
+
+  // Ring animation
+  setTimeout(() => {
+    const circumference = 596.9;
+    const offset = circumference - (circumference * _score / 100);
+    document.getElementById('ringFill').style.strokeDashoffset = offset;
+    // Color based on score
+    const color = _score < 35 ? '#ef4444' : _score < 60 ? '#f59e0b' : '#10b981';
+    document.getElementById('ringFill').style.stroke = color;
+  }, 200);
+
+  // Label
+  let label, brief;
+  if (_score < 30) {
+    label = 'Almost Invisible'; brief = 'Very little information exists about you online. You\'re missing significant opportunities.';
+  } else if (_score < 50) {
+    label = 'Weak Presence'; brief = 'You have some online footprint but it\'s sparse and potentially inconsistent.';
+  } else if (_score < 70) {
+    label = 'Average Presence'; brief = 'You\'re findable online, but your digital reputation has room to grow significantly.';
+  } else if (_score < 85) {
+    label = 'Strong Presence'; brief = 'You have solid online visibility with a generally positive digital reputation.';
+  } else {
+    label = 'Dominant Presence'; brief = 'Excellent! You have strong, consistent online visibility across multiple platforms.';
+  }
+  document.getElementById('scoreLabel').textContent = label;
+  document.getElementById('scoreBrief').textContent = brief;
+
+  // Meta pills
+  const platforms = _data.platforms || [];
+  const domains = _data.domains || [];
+  document.getElementById('metaPlatforms').textContent = `📡 ${platforms.length} platforms found`;
+  document.getElementById('metaDomains').textContent = `🔗 ${domains.length} online mentions`;
+  const riskLevel = _score < 40 ? 'High' : _score < 65 ? 'Medium' : 'Low';
+  const riskEmoji = _score < 40 ? '🔴' : _score < 65 ? '🟡' : '🟢';
+  document.getElementById('metaRisk').textContent = `${riskEmoji} Risk: ${riskLevel}`;
+
+  // Platforms
+  renderPlatforms(platforms);
+
+  // AI Summary
+  document.getElementById('aiSummary').textContent = _data.ai || 'No AI analysis returned from the backend.';
+
+  // Domains
+  renderDomains(domains);
+
+  // Insight card
+  const insightTexts = {
+    low: `Based on the scan, "${_name}" has limited digital visibility. This means potential employers, clients, or collaborators searching for you online may find little to no information — which can hurt first impressions and professional credibility.`,
+    mid: `"${_name}" has a moderate digital presence. While you're discoverable, the consistency and depth of your online profiles could be significantly improved to build stronger professional credibility.`,
+    high: `"${_name}" has a solid digital presence across multiple platforms. Your online reputation is generally positive, though there are strategic opportunities to further strengthen your visibility and brand narrative.`
+  };
+  const key = _score < 45 ? 'low' : _score < 70 ? 'mid' : 'high';
+  document.getElementById('insightText').textContent = insightTexts[key];
+
+  // Tags
+  const tagSets = {
+    low: ['Needs Attention', 'Low Discoverability', 'Profile Gaps'],
+    mid: ['Room to Grow', 'Inconsistent Branding', 'Moderate Reach'],
+    high: ['Well-Established', 'Professional Image', 'Strong SEO']
+  };
+  const tagsEl = document.getElementById('insightTags');
+  tagsEl.innerHTML = '';
+  tagSets[key].forEach(t => {
+    const span = document.createElement('span');
+    span.className = 'insight-tag';
+    span.textContent = t;
+    tagsEl.appendChild(span);
+  });
+
+  // Premium content prep (rendered but hidden)
+  renderPremiumContent();
 }
 
-function buildPremiumReport(name, prof, score, band, platforms, fullData) {
-  const fn = name.split(' ')[0];
-  const profLabel = prof || 'Professional';
-  const today = new Date().toLocaleDateString('en-IN', {day:'numeric', month:'long', year:'numeric'});
-  const slug = name.toLowerCase().replace(/\s+/g,'');
-  const aiText = fullData?.ai || "No detailed analysis available.";
-  const domains = fullData?.domains || [];
+function renderPlatforms(platforms) {
+  const grid = document.getElementById('platformsGrid');
+  grid.innerHTML = '';
+  if (!platforms.length) {
+    grid.innerHTML = '<p style="color:var(--ink-muted);font-size:14px;grid-column:1/-1;">No platform data returned.</p>';
+    return;
+  }
+  platforms.forEach(p => {
+    const domain = p.domain || (p.name.toLowerCase().replace(/\s+/g,'') + '.com');
+    const div = document.createElement('div');
+    div.className = 'platform-card';
+    div.innerHTML = `
+      <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64"
+           class="platform-favicon" alt="${p.name}" onerror="this.src='https://www.google.com/s2/favicons?domain=google.com&sz=64'">
+      <div class="platform-name">${p.name}</div>
+      <div class="platform-score ${p.score > 0 ? 'pos' : 'neg'}">${p.score > 0 ? '+'+p.score : '—'}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
 
-  const premium = document.getElementById('premiumReport');
-  premium.innerHTML = `
-    <div class="report-header">
-      <div class="report-badge">✦ Premium Report · Unlocked</div>
-      <div class="report-title-main">SearchMe Reputation<br>Report for <span>${name}</span></div>
-      <div class="report-meta">Generated on ${today} · Confidential</div>
-      <div class="report-score-pill"><div><div class="report-score-num" style="color:#e63946">${score}</div></div><div class="report-score-label">Your Google<br>Presence Score</div></div>
-    </div>
-
-    <!-- AI Deep Analysis -->
-    <div class="report-section">
-      <div class="report-section-header"><div class="section-icon purple">🤖</div><div><div class="section-label">AI INSIGHT</div><div class="section-name">What AI Found About You Online</div></div></div>
-      <div class="report-section-body"><p style="line-height:1.7;">${aiText}</p></div>
-    </div>
-
-    <!-- Key Online Appearances -->
-    <div class="report-section">
-      <div class="report-section-header"><div class="section-icon blue">🔗</div><div><div class="section-label">SECTION G</div><div class="section-name">Key Online Appearances</div></div></div>
-      <div class="report-section-body">
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;">
-          ${domains.map(url => {
-            const d = new URL(url).hostname;
-            return `<a href="${url}" target="_blank" style="text-decoration:none;">
-              <div class="opp-card">
-                <div style="width:48px;height:48px;background:#f8f9fa;border-radius:10px;display:flex;align-items:center;justify-content:center;">
-                  <img src="https://www.google.com/s2/favicons?domain=${d}&sz=64" width="32" height="32" style="border-radius:6px;">
-                </div>
-                <div style="flex:1;"><strong>${d}</strong><br><small style="color:#666">${url}</small></div>
-              </div>
-            </a>`;
-          }).join('')}
+function renderDomains(domains) {
+  const grid = document.getElementById('domainsGrid');
+  grid.innerHTML = '';
+  if (!domains.length) {
+    grid.innerHTML = '<p style="color:var(--ink-muted);font-size:14px;grid-column:1/-1;">No domain appearances found.</p>';
+    return;
+  }
+  domains.forEach(url => {
+    try {
+      const hostname = new URL(url).hostname;
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+      a.className = 'domain-card';
+      a.innerHTML = `
+        <img src="https://www.google.com/s2/favicons?domain=${hostname}&sz=64"
+             class="domain-favicon" alt="${hostname}" onerror="this.src='https://www.google.com/s2/favicons?domain=google.com&sz=64'">
+        <div>
+          <div class="domain-host">${hostname}</div>
+          <div class="domain-sub">Mentioned online</div>
         </div>
-      </div>
-    </div>
+      `;
+      grid.appendChild(a);
+    } catch(e) {}
+  });
+}
 
-    <!-- Reputation Risk -->
-    <div class="report-section">
-      <div class="report-section-header"><div class="section-icon red">⚠️</div><div><div class="section-label">RISK ASSESSMENT</div><div class="section-name">Reputation Risk Score</div></div></div>
-      <div class="report-section-body">
-        <div class="callout ${score<40?'red':score<70?'yellow':'green'}">
-          <strong>Risk Level: ${score<40?'HIGH':score<70?'MEDIUM':'LOW'}</strong><br>
-          ${score<40?'Your weak presence makes you easily overlooked by recruiters.' : score<70?'Moderate visibility with some credibility gaps.' : 'Strong presence with low risk.'}
-        </div>
-      </div>
-    </div>
+function renderPremiumContent() {
+  const n = _name;
+  const s = _score;
 
-    <!-- All your original sections (Diagnosis, First Impression, LinkedIn, SEO, Action Plan, Opportunities) are preserved below -->
-    <!-- ... (full original content from your v2 file) ... -->
+  document.getElementById('diagnosisContent').innerHTML = `
+    Your Google score of <strong>${s}/100</strong> places you in the <strong>${s < 40 ? 'low' : s < 70 ? 'mid' : 'high'}</strong> tier of online presence. 
+    ${s < 50 ? `The primary reasons for this score are: limited platform presence, few indexed pages about you, and inconsistent personal branding. Many people who search for "${n}" will either find nothing or find unrelated results.` 
+    : `You have a reasonable footprint, but key platforms are either missing or underdeveloped. There may be outdated information or inconsistent branding across platforms that's diluting your overall score.`}
+    <br><br>The biggest factors dragging your score down are: inactive or missing LinkedIn presence, no personal website, and limited content creation in your field.
+  `;
+
+  document.getElementById('impressionContent').innerHTML = `
+    When someone Googles <strong>"${n}"</strong> today, here's what they likely see:<br><br>
+    ${s < 40 ? '❌ Very few or no results specific to you<br>❌ Possible irrelevant people with the same name<br>❌ No professional profiles in the top 5 results<br>❌ No images, articles or publications' 
+    : s < 70 ? '✅ Some social profiles visible<br>🟡 LinkedIn likely appearing but partially complete<br>❌ No owned website to anchor your identity<br>🟡 Sparse content showing expertise' 
+    : '✅ Multiple professional profiles<br>✅ Consistent name & photo across platforms<br>✅ Some content pieces establishing authority<br>🟡 Could still benefit from a personal website'}
+    <br><br>The first page of Google results is your digital business card. Currently, you're leaving that impression to chance.
+  `;
+
+  document.getElementById('linkedinContent').innerHTML = `
+    LinkedIn is often the #1 or #2 result when people search your name. Here's what to optimize:<br><br>
+    <strong>Profile Photo</strong> — Use a professional, high-resolution headshot. Profiles with photos get 21× more views.<br><br>
+    <strong>Headline</strong> — Don't just write your job title. Write: [Role] | [Value you deliver] | [Industry keyword]<br><br>
+    <strong>About Section</strong> — Write 3–5 paragraphs in first person. Include your expertise, what you've achieved, and what you're looking for.<br><br>
+    <strong>Featured Section</strong> — Pin your best work: articles, projects, media mentions, or a portfolio link.<br><br>
+    <strong>Activity</strong> — Post at least once a week. Comments and reposts also boost your visibility in search.
+  `;
+
+  document.getElementById('strategyContent').innerHTML = `
+    To rank higher when people search <strong>"${n}"</strong>, follow this strategy:<br><br>
+    <strong>1. Claim your name</strong> — Register <code>${n.toLowerCase().replace(/\s+/g, '')}.com</code> or at minimum a free site on About.me, Linktree, or Carrd.<br><br>
+    <strong>2. Consistent NAP</strong> — Use the same Name, Photo, and Bio description across all platforms.<br><br>
+    <strong>3. Content signals</strong> — Publish articles on LinkedIn or Medium using your full name. Google indexes these fast.<br><br>
+    <strong>4. Backlinks</strong> — Get quoted or mentioned in industry publications, podcasts, or community forums.<br><br>
+    <strong>5. Google Knowledge Panel</strong> — Once you have 5+ indexed sources, you may qualify for a Google Knowledge Panel — the ultimate personal brand signal.
+  `;
+
+  // Action plan
+  const steps = [
+    { week: 'Week 1', text: 'Complete & optimize your LinkedIn profile with new headline, photo, and about section.' },
+    { week: 'Week 2', text: 'Create a simple personal website or landing page at your name domain or Carrd/About.me.' },
+    { week: 'Week 3', text: 'Write and publish your first article on LinkedIn or Medium — share a professional insight or story.' },
+    { week: 'Week 4', text: 'Audit all social profiles — update bios, add professional photos, remove outdated info.' },
+    { week: 'Month 2', text: 'Apply to be featured on 2–3 industry podcasts, blogs, or community newsletters.' },
+    { week: 'Month 3', text: 'Launch a consistent content schedule — 1 post/week on LinkedIn minimum. Track and iterate.' }
+  ];
+  const planEl = document.getElementById('actionPlanContent');
+  planEl.innerHTML = '';
+  steps.forEach((step, i) => {
+    const div = document.createElement('div');
+    div.className = 'action-step';
+    div.innerHTML = `<div class="step-num">${i+1}</div><div><strong>${step.week}</strong><br><span style="color:var(--ink-light);font-size:14px;">${step.text}</span></div>`;
+    planEl.appendChild(div);
+  });
+
+  document.getElementById('opportunitiesContent').innerHTML = `
+    Based on your scan, these platforms are either missing or underutilised for <strong>${n}</strong>:<br><br>
+    📘 <strong>LinkedIn</strong> — The most critical for professional credibility<br>
+    🌐 <strong>Personal Website</strong> — Your owned home base online<br>
+    📝 <strong>Medium / Substack</strong> — Builds authority through writing<br>
+    🎙️ <strong>Podcast Appearances</strong> — High-trust SEO backlinks<br>
+    🐦 <strong>Twitter/X</strong> — Real-time engagement & visibility<br>
+    📸 <strong>Instagram (Professional)</strong> — Visual brand storytelling<br>
+    🎬 <strong>YouTube</strong> — Long-form content with massive SEO upside<br><br>
+    Claim and complete profiles on at least 3 of these to meaningfully boost your score within 60 days.
+  `;
+
+  // Risk Score
+  const riskScore = Math.max(10, 85 - _score);
+  const riskColor = riskScore > 60 ? '#ef4444' : riskScore > 35 ? '#f59e0b' : '#10b981';
+  document.getElementById('riskContent').innerHTML = `
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+        <span style="font-weight:600;font-size:14px;color:var(--ink);">Reputation Risk Level</span>
+        <span style="font-weight:800;font-size:18px;color:${riskColor};">${riskScore}/100</span>
+      </div>
+      <div class="risk-bar-bg">
+        <div class="risk-bar-fill" style="width:${riskScore}%;background:${riskColor};"></div>
+      </div>
+      <div style="font-size:13px;color:var(--ink-muted);">Higher = more at risk. Lower is better.</div>
+    </div>
+    <div class="report-content">
+      ${riskScore > 60 
+        ? '🔴 <strong>High Risk:</strong> Your low digital presence means others may rank above you for your own name, creating confusion or a poor first impression. Fake profiles or outdated info could be dominating your results.'
+        : riskScore > 35 
+        ? '🟡 <strong>Medium Risk:</strong> You have some presence, but inconsistent branding could create mixed signals. A competitor or outdated social profile may be creating a misleading narrative.'
+        : '🟢 <strong>Low Risk:</strong> Your strong presence means you\'re relatively protected. However, staying active is key — neglecting your profiles for 6+ months can cause your score to drop.'}
+    </div>
   `;
 }
 
-function toggleCheck(el){ el.classList.toggle('done'); el.textContent = el.classList.contains('done')?'✓':''; }
-
-function handlePayment(){ /* your original payment code */ window.open('https://rzp.io/rzp/PUNs9XqO','_blank'); }
-
-function unlockReport(){
-  document.getElementById('lockedSection').style.display='none';
-  buildPremiumReport(_name, _prof, _score, _band, _platforms, _fullData);
-  document.getElementById('premiumReport').classList.add('revealed');
+// ── PAYMENT ──
+function handlePayment() {
+  window.open('https://rzp.io/rzp/PUNs9XqO', '_blank');
+  setTimeout(() => {
+    const btn = document.getElementById('ipaidBtn');
+    btn.style.display = 'inline-flex';
+    btn.style.animation = 'fadeUp 0.4s ease forwards';
+  }, 2500);
 }
 
-document.addEventListener('keydown', e => { if(e.key==='Enter') checkScore(); });
+function unlockReport() {
+  document.getElementById('lockedSection').style.display = 'none';
+  const report = document.getElementById('premiumReport');
+  report.style.display = 'block';
+  report.style.animation = 'fadeUp 0.5s ease forwards';
+  report.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ── PDF DOWNLOAD ──
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  const margin = 50;
+  let y = 60;
+
+  const addText = (text, size, bold, color) => {
+    doc.setFontSize(size || 12);
+    doc.setFont('helvetica', bold ? 'bold' : 'normal');
+    doc.setTextColor(...(color || [30,22,20]));
+    const lines = doc.splitTextToSize(String(text), W - margin * 2);
+    lines.forEach(line => {
+      if (y > 780) { doc.addPage(); y = 60; }
+      doc.text(line, margin, y);
+      y += size ? size * 1.4 : 18;
+    });
+    y += 4;
+  };
+
+  // Header
+  doc.setFillColor(26, 22, 20);
+  doc.rect(0, 0, W, 80, 'F');
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(255, 255, 255);
+  doc.text('Google Me Score — Full Report', margin, 46);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(180, 170, 160);
+  doc.text(`Prepared for: ${_name}`, margin, 65);
+  y = 110;
+
+  addText(`Overall Score: ${_score}/100`, 20, true, [212, 56, 13]);
+  y += 8;
+
+  addText('AI Summary', 16, true);
+  addText(_data.ai || 'No AI analysis available.', 12, false, [80, 70, 60]);
+  y += 12;
+
+  addText('Reputation Diagnosis', 16, true);
+  addText(document.getElementById('diagnosisContent').innerText, 12, false, [80, 70, 60]);
+  y += 12;
+
+  addText('First Impression Analysis', 16, true);
+  addText(document.getElementById('impressionContent').innerText, 12, false, [80, 70, 60]);
+  y += 12;
+
+  addText('LinkedIn Optimisation Tips', 16, true);
+  addText(document.getElementById('linkedinContent').innerText, 12, false, [80, 70, 60]);
+  y += 12;
+
+  addText('Search Visibility Strategy', 16, true);
+  addText(document.getElementById('strategyContent').innerText, 12, false, [80, 70, 60]);
+  y += 12;
+
+  addText('90-Day Action Plan', 16, true);
+  addText(document.getElementById('actionPlanContent').innerText, 12, false, [80, 70, 60]);
+  y += 12;
+
+  addText('Hidden Opportunities', 16, true);
+  addText(document.getElementById('opportunitiesContent').innerText, 12, false, [80, 70, 60]);
+
+  // Footer
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(160, 150, 140);
+    doc.text(`Page ${i} of ${pageCount} · Google Me Score · Confidential`, margin, 820);
+  }
+
+  doc.save(`GoogleMeScore_${_name.replace(/\s+/g,'_')}.pdf`);
+}
 </script>
 </body>
 </html>
