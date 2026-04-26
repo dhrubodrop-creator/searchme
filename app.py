@@ -38,6 +38,14 @@ def get_google_results(name, context):
         res = requests.get(url, params=params, timeout=10)
         data = res.json()
 
+        # 🔴 DEBUG (see in Render logs)
+        print("SERP RAW:", data)
+
+        # Handle API errors
+        if "error" in data:
+            print("SERP ERROR:", data["error"])
+            return []
+
         results = data.get("organic_results", [])
 
         return [{
@@ -46,7 +54,7 @@ def get_google_results(name, context):
         } for i in results[:6]]
 
     except Exception as e:
-        print("SERP ERROR:", e)
+        print("SERP EXCEPTION:", e)
         return []
 
 
@@ -131,7 +139,7 @@ Tone:
 
     except Exception as e:
         print("GROQ ERROR:", e)
-        return "AI unavailable"
+        return "AI temporarily unavailable"
 
 
 # ---------------- FRONTEND ----------------
