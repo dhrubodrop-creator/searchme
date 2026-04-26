@@ -4,9 +4,8 @@ from fastapi.responses import HTMLResponse
 import requests, os
 from dotenv import load_dotenv
 from groq import Groq
-from urllib.parse import urlparse
 
-# ✅ Force env load (fix local issues)
+# Load env safely
 load_dotenv(".env", override=True)
 
 app = FastAPI()
@@ -34,7 +33,7 @@ def get_google_results(name, context):
                 "q": query,
                 "api_key": SERP_API_KEY
             },
-            timeout=10
+            timeout=8
         )
 
         data = res.json()
@@ -45,40 +44,38 @@ def get_google_results(name, context):
 
         results = data.get("organic_results", [])
 
-        # ✅ FIX: deeper search (CRITICAL)
         return [{
             "title": i.get("title", ""),
-            "link": i.get("link", "")
-        } for i in results[:15]]
+            "link": i.get("link", ""),
+            "snippet": i.get("snippet", "")
+        } for i in results[:12]]
 
     except Exception as e:
-        print("SERP EXCEPTION:", e)
+        print("SERP FAIL:", e)
         return []
 
 
 # ---------------- ANALYSIS ----------------
 def analyze_results(results):
-    links = [r["link"] for r in results]
-
-    # Extract domains
-    domains = [urlparse(link).netloc.lower() for link in links]
-
-    # Also check titles + links (stronger detection)
     full_text = " ".join([
-        (r["title"] + " " + r["link"]).lower()
+        (r["title"] + " " + r["link"] + " " + r.get("snippet", "")).lower()
         for r in results
     ])
 
-    # ✅ Robust platform detection
     platforms = {
-        "LinkedIn": 1 if "linkedin.com" in full_text else 0,
-        "GitHub": 1 if "github.com" in full_text else 0,
-        "Twitter/X": 1 if ("twitter.com" in full_text or "x.com" in full_text) else 0,
-        "Instagram": 1 if "instagram.com" in full_text else 0,
-        "YouTube": 1 if "youtube.com" in full_text else 0,
+        "LinkedIn": int("linkedin.com" in full_text),
+        "GitHub": int("github.com" in full_text),
+        "Twitter/X": int("twitter.com" in full_text or "x.com" in full_text),
+        "Instagram": int("instagram.com" in full_text),
+        "YouTube": int("youtube.com" in full_text),
     }
 
     results_count = len(results)
+
+    # authority signals
+    authority = any(x in full_text for x in [
+        "wikipedia.org", "forbes", "bloomberg", "techcrunch", "cnn", "bbc"
+    ])
 
     # ---------------- GOOGLE SCORE ----------------
     google_score = 0
@@ -89,16 +86,22 @@ def analyze_results(results):
     google_score += 10 if platforms["YouTube"] else 0
     google_score += min(results_count * 3, 20)
 
+    if authority:
+        google_score += 10
+
     google_score = min(google_score, 100)
 
     # ---------------- LAYOFF RISK ----------------
     layoff_risk = 100 - google_score
 
     if not platforms["LinkedIn"]:
-        layoff_risk += 20
-
-    if results_count < 5:
         layoff_risk += 15
+
+    if results_count < 4:
+        layoff_risk += 10
+
+    if not authority:
+        layoff_risk += 10
 
     layoff_risk = min(layoff_risk, 100)
 
@@ -106,48 +109,73 @@ def analyze_results(results):
     risks = []
 
     if not platforms["LinkedIn"]:
-        risks.append("No LinkedIn → invisible to recruiters")
+        risks.append("No LinkedIn → low professional visibility")
 
-    if results_count < 5:
-        risks.append("Low Google presence → easily replaceable")
+    if results_count < 4:
+        risks.append("Low Google presence → weak discoverability")
+
+    if not authority:
+        risks.append("No authority mentions → low credibility")
 
     if not platforms["Twitter/X"] and not platforms["YouTube"]:
-        risks.append("No public presence → no industry signal")
+        risks.append("No public presence → weak industry signal")
 
     return google_score, layoff_risk, risks, platforms
 
 
 # ---------------- AI ----------------
-def ai_analysis(name, google_score, layoff_risk, risks, platforms):
+def ai_analysis(name, google_score, layoff_risk, risks, platforms, results):
     prompt = f"""
-You are a blunt career risk analyst.
+You are a brutally honest digital reputation and career risk analyst.
 
-Person: {name}
-Google Score: {google_score}/100
-Layoff Risk: {layoff_risk}/100
-Signals: {platforms}
-Risks: {risks}
+PERSON:
+{name}
 
-Write:
+GOOGLE SCORE:
+{google_score}/100
 
-1. One-line verdict (direct, slightly harsh)
-2. 3 specific reasons
-3. 2 ways others are ahead
-4. 2 actions to fix
+LAYOFF RISK:
+{layoff_risk}/100
 
-No fluff. No generic advice.
+PLATFORM SIGNALS:
+{platforms}
+
+DETECTED RISKS:
+{risks}
+
+SEARCH DATA:
+{results}
+
+--------------------------------
+
+OUTPUT:
+
+1. VERDICT (1 line, sharp)
+
+2. WHAT THIS SIGNALS (3 bullets)
+
+3. WHERE THEY FALL BEHIND (2 bullets)
+
+4. HIDDEN RISK (1 insight)
+
+5. FIX (2 actions only)
+
+STYLE:
+- direct
+- slightly harsh
+- no fluff
 """
 
     try:
         res = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=200
+            max_tokens=180
         )
         return res.choices[0].message.content
 
     except Exception as e:
-        print("GROQ ERROR:", e)
+        print("AI ERROR:", e)
         return "AI temporarily unavailable"
 
 
@@ -196,7 +224,14 @@ def analyze(data: Input):
 
     google_score, layoff_risk, risks, platforms = analyze_results(results)
 
-    ai = ai_analysis(data.name, google_score, layoff_risk, risks, platforms)
+    ai = ai_analysis(
+        data.name,
+        google_score,
+        layoff_risk,
+        risks,
+        platforms,
+        results
+    )
 
     return {
         "google_score": google_score,
