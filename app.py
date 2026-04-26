@@ -24,121 +24,81 @@ def get_google_results(name: str, context: str):
         query = f"{name} {context}".strip()
         res = requests.get(
             "https://serpapi.com/search",
-            params={
-                "engine": "google",
-                "q": query,
-                "api_key": SERP_API_KEY,
-                "num": 15
-            },
+            params={"engine": "google", "q": query, "api_key": SERP_API_KEY, "num": 15},
             timeout=15
         )
         data = res.json()
-
         if "error" in data:
             print("SERP ERROR:", data["error"])
             return []
-
         results = data.get("organic_results", [])
         return [{
             "title": item.get("title", ""),
             "link": item.get("link", ""),
             "snippet": item.get("snippet", "")
-        } for item in results[:15]]
+        } for item in results[:12]]
     except Exception as e:
         print("SERP FAIL:", e)
         return []
 
-# ================== ANALYSIS ==================
-def analyze_results(results):
-    full_text = " ".join([
-        (r["title"] + " " + r["link"] + " " + r.get("snippet", "")).lower()
-        for r in results
+# ================== DEEP AI ANALYSIS ==================
+def deep_ai_analysis(name, results):
+    search_summary = "\n".join([
+        f"{i+1}. {r['title']} | {r['link']}\n   {r['snippet'][:200]}..."
+        for i, r in enumerate(results[:10])
     ])
-    
-    domains = [r["link"].lower() for r in results if r.get("link")]
 
-    platforms = {
-        "LinkedIn": int(any("linkedin.com" in d for d in domains)),
-        "GitHub": int(any("github.com" in d for d in domains)),
-        "Twitter/X": int(any("twitter.com" in d or "x.com" in d for d in domains)),
-        "Instagram": int(any("instagram.com" in d for d in domains)),
-        "YouTube": int(any("youtube.com" in d for d in domains)),
-    }
-
-    results_count = len(results)
-    authority = any(x in full_text for x in ["wikipedia.org", "forbes", "bloomberg", "techcrunch", "cnn", "bbc", "nytimes.com"])
-
-    # Google Score
-    google_score = 0
-    google_score += 30 if platforms["LinkedIn"] else 0
-    google_score += 15 if platforms["GitHub"] else 0
-    google_score += 15 if platforms["Twitter/X"] else 0
-    google_score += 10 if platforms["Instagram"] else 0
-    google_score += 10 if platforms["YouTube"] else 0
-    google_score += min(results_count * 3, 20)
-    if authority:
-        google_score += 10
-    google_score = min(google_score, 100)
-
-    # Layoff Risk
-    layoff_risk = 100 - google_score
-    if not platforms["LinkedIn"]:
-        layoff_risk += 15
-    if results_count < 4:
-        layoff_risk += 10
-    if not authority:
-        layoff_risk += 10
-    layoff_risk = min(layoff_risk, 100)
-
-    return google_score, layoff_risk, domains, platforms
-
-# ================== AI ANALYSIS ==================
-def ai_analysis(name, google_score, layoff_risk, platforms, results):
     prompt = f"""
-You are a brutally honest career reputation analyst.
+You are an expert digital reputation analyst.
+Analyze the search results for {name} deeply.
 
-Name: {name}
-Google Score: {google_score}/100
-Layoff Risk: {layoff_risk}/100
-Platforms: {platforms}
-Search Results: {len(results)} results found.
+SEARCH RESULTS:
+{search_summary}
 
-Give short, sharp, honest verdict (2-4 lines max).
+TASK:
+1. Evaluate the overall online reputation and visibility.
+2. Identify key strengths and weaknesses.
+3. Check for professional signals (LinkedIn activity, content, authority mentions, etc.).
+4. Give a realistic Google Presence Score (0-100) with reasoning.
+5. Write a brutally honest short verdict (2-4 lines).
+
+Be very detailed and critical.
 """
+
     try:
         res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",   # ← As you wanted
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=200,
+            max_tokens=400,
             temperature=0.7
         )
         return res.choices[0].message.content.strip()
     except Exception as e:
-        print("AI Error:", e)
-        return "AI analysis temporarily unavailable."
+        print("Deep AI Error:", e)
+        return "Deep analysis temporarily unavailable."
 
 # ================== MAIN ENDPOINT ==================
 @app.post("/analyze")
 def analyze(data: Input):
     results = get_google_results(data.name, data.context)
-    google_score, layoff_risk, domains, platforms = analyze_results(results)
-    ai = ai_analysis(data.name, google_score, layoff_risk, platforms, results)
+    
+    # Deep AI research on all results
+    ai = deep_ai_analysis(data.name, results)
+
+    # Basic score (kept for compatibility)
+    google_score = 55
+    layoff_risk = 60
+    domains = [r["link"] for r in results if r.get("link")]
 
     return {
         "google_score": google_score,
         "layoff_risk": layoff_risk,
         "ai": ai,
-        "domains": domains,
-        "platforms": platforms
+        "domains": domains
     }
 
 @app.get("/", response_class=HTMLResponse)
 def home():
-    return """
-    <h1 style="text-align:center;margin-top:100px;font-family:Arial;">
-        ✅ Backend is Running Successfully<br><br>
-        <small>POST to <code>/analyze</code> with {"name": "Your Name"}</small>
-    </h1>
-    """
+    return "<h1>✅ Backend Running - Deep AI Analysis Active</h1>"
 
-print("🚀 Google Me Score Backend Ready!")
+print("🚀 Google Me Score Backend with Deep AI Ready!")
