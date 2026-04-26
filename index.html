@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google Me Score – What Does Google Say About You?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f7f7f5;
+    --white: #ffffff;
+    --text: #0f0f0f;
+    --muted: #6b6b6b;
+    --border: #e4e4e0;
+    --red: #e63946;
+    --red-light: #fde8ea;
+    --yellow: #f4a261;
+    --yellow-light: #fef3e8;
+    --green: #2a9d8f;
+    --green-light: #e6f5f3;
+    --accent: #1a1a2e;
+    --accent2: #e63946;
+    --blue: #3b82f6;
+    --blue-light: #eff6ff;
+    --purple: #7c3aed;
+    --purple-light: #f5f3ff;
+    --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(247,247,245,0.88);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 60px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .nav-logo span { color: var(--accent2); }
+  .nav-badge {
+    background: var(--red-light); color: var(--red);
+    font-size: 0.7rem; font-weight: 600;
+    padding: 2px 8px; border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  .hero {
+    min-height: 92vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 60px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(230,57,70,0.07) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 80% 100%, rgba(42,157,143,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 0.8rem; font-weight: 500; color: var(--muted);
+    margin-bottom: 28px; box-shadow: var(--shadow-sm);
+    animation: fadeUp 0.5s ease both;
+  }
+  .hero-eyebrow .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--red); animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4.2rem); font-weight: 800;
+    line-height: 1.08; letter-spacing: -0.03em;
+    color: var(--text); margin-bottom: 20px;
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+  h1 em { font-style: normal; color: var(--accent2); }
+
+  .hero-sub {
+    font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--muted);
+    max-width: 480px; margin: 0 auto 40px; font-weight: 400;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+
+  .hero-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 32px;
+    max-width: 480px; width: 100%; box-shadow: var(--shadow-md);
+    animation: fadeUp 0.5s 0.3s ease both;
+  }
+
+  .input-group { margin-bottom: 14px; }
+  .input-group label {
+    display: block; font-size: 0.78rem; font-weight: 600;
+    color: var(--muted); margin-bottom: 6px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .input-group input {
+    width: 100%; padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm); outline: none; color: var(--text);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-group input:focus {
+    border-color: var(--accent2);
+    box-shadow: 0 0 0 3px rgba(230,57,70,0.08);
+  }
+  .input-group input::placeholder { color: #b0b0b0; }
+
+  .cta-btn {
+    width: 100%; margin-top: 8px; padding: 16px 24px;
+    background: var(--text); color: var(--white);
+    font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700;
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    letter-spacing: -0.01em;
+  }
+  .cta-btn:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+  .cta-btn:active { transform: translateY(0); }
+
+  .hero-trust {
+    margin-top: 20px; font-size: 0.82rem; color: var(--muted);
+    display: flex; align-items: center; justify-content: center; gap: 16px;
+    animation: fadeUp 0.5s 0.4s ease both;
+  }
+  .hero-trust span { display: flex; align-items: center; gap: 5px; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  #results {
+    display: none; max-width: 720px; margin: 0 auto;
+    padding: 0 24px 80px; animation: fadeUp 0.5s ease both;
+  }
+  #results.visible { display: block; }
+
+  .score-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 40px 32px; text-align: center;
+    box-shadow: var(--shadow-md); margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .score-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: var(--score-color, var(--red));
+  }
+
+  .score-name {
+    font-size: 0.85rem; font-weight: 600; color: var(--muted);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px;
+  }
+  .score-ring {
+    width: 160px; height: 160px; margin: 0 auto 24px;
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .score-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .score-ring circle { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1); }
+  .ring-bg { stroke: var(--border); }
+  .ring-fill { stroke: var(--score-color, var(--red)); }
+  .score-num {
+    font-family: 'Syne', sans-serif; font-size: 3.2rem; font-weight: 800;
+    line-height: 1; color: var(--score-color, var(--red)); position: relative; z-index: 1;
+  }
+  .score-denom { font-size: 1.1rem; font-weight: 400; color: var(--muted); }
+  .score-label { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .score-brutal { font-size: 1.05rem; color: var(--muted); font-weight: 400; }
+  .score-brutal strong { color: var(--accent2); font-weight: 600; }
+
+  .section-title {
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700;
+    color: var(--text); margin-bottom: 14px; letter-spacing: -0.01em;
+  }
+
+  .platform-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px; margin-bottom: 20px;
+  }
+  .platform-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 18px 16px;
+    display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm);
+    transition: transform 0.15s, box-shadow 0.15s;
+    opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards;
+  }
+  .platform-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .p-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .p-info { flex: 1; min-width: 0; }
+  .p-name { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+  .p-status { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; }
+  .p-status.present { color: var(--green); }
+  .p-status.missing { color: var(--red); }
+  .p-score { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--muted); }
+
+  .insight-block {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: var(--radius); padding: 32px; color: white;
+    margin-bottom: 20px; position: relative; overflow: hidden;
+  }
+  .insight-block::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(230,57,70,0.3) 0%, transparent 70%);
+  }
+  .insight-tag {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+  }
+  .insight-tag::before { content: ''; width: 16px; height: 1.5px; background: var(--accent2); }
+  .insight-text { font-family: 'Syne', sans-serif; font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 700; line-height: 1.4; color: white; margin-bottom: 14px; }
+  .insight-sub { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+
+  /* ── LOCKED SECTION ── */
+  .locked-section {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative;
+  }
+  .locked-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+  .locked-header h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .locked-header p { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+  .locked-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; filter: blur(3px); user-select: none; pointer-events: none; }
+  .locked-item { padding: 20px; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .locked-item:nth-child(2n) { border-right: none; }
+  .locked-item:nth-child(3), .locked-item:nth-child(4) { border-bottom: none; }
+  .locked-item-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .locked-item-title { font-weight: 600; font-size: 0.88rem; color: var(--text); margin-bottom: 4px; }
+  .locked-item-desc { font-size: 0.8rem; color: var(--muted); }
+
+  .locked-overlay {
+    position: absolute; inset: 60px 0 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.95) 60%);
+    padding: 24px; text-align: center;
+  }
+  .lock-icon {
+    width: 52px; height: 52px; background: var(--text); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    margin-bottom: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  }
+  .locked-overlay h4 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .locked-overlay p { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+
+  .pay-btn {
+    width: 100%; padding: 18px 24px; background: var(--accent2); color: white;
+    font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800;
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: transform 0.15s, box-shadow 0.15s; letter-spacing: -0.01em;
+    position: relative; overflow: hidden;
+  }
+  .pay-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%); }
+  .pay-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(230,57,70,0.35); }
+  .pay-btn:active { transform: translateY(0); }
+
+  /* "I Paid" button */
+  .ipaid-btn {
+    width: 100%; margin-top: 12px; padding: 15px 24px;
+    background: var(--white); color: var(--green);
+    font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700;
+    border: 2px solid var(--green); border-radius: var(--radius-sm); cursor: pointer;
+    display: none; align-items: center; justify-content: center; gap: 8px;
+    transition: background 0.2s, transform 0.15s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .ipaid-btn:hover { background: var(--green-light); transform: translateY(-1px); }
+  .ipaid-btn.show { display: flex; }
+
+  .pay-sub {
+    text-align: center; font-size: 0.8rem; color: var(--muted); margin-top: 10px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+  }
+  .pay-sub span { display: flex; align-items: center; gap: 4px; }
+
+  .social-proof {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 18px 20px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: var(--shadow-sm); margin-top: 16px;
+  }
+  .avatars { display: flex; flex-direction: row-reverse; }
+  .avatar {
+    width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--white);
+    margin-left: -8px; font-size: 0.8rem;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: white;
+  }
+  .social-proof-text { flex: 1; }
+  .social-proof-text strong { font-size: 0.9rem; font-weight: 600; display: block; }
+  .social-proof-text span { font-size: 0.78rem; color: var(--muted); }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; flex-shrink: 0; }
+
+  /* ── LOADING ── */
+  .loading-overlay {
+    display: none; position: fixed; inset: 0; z-index: 200;
+    background: rgba(247,247,245,0.92); backdrop-filter: blur(8px);
+    flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  }
+  .loading-overlay.active { display: flex; }
+  .loading-spinner { width: 56px; height: 56px; border: 3px solid var(--border); border-top-color: var(--accent2); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 24px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .loading-sub { font-size: 0.88rem; color: var(--muted); }
+  .loading-steps { margin-top: 24px; display: flex; flex-direction: column; gap: 8px; width: 280px; }
+  .loading-step { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); opacity: 0; transition: opacity 0.3s; }
+  .loading-step.done { opacity: 1; color: var(--green); }
+  .loading-step.done::before { content: '✓'; font-weight: 700; }
+  .loading-step:not(.done)::before { content: '○'; }
+
+  /* ── PREMIUM REPORT ── */
+  #premiumReport {
+    display: none; margin-top: 24px;
+    animation: reportReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  #premiumReport.revealed { display: block; }
+  @keyframes reportReveal {
+    from { opacity: 0; transform: translateY(32px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .report-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+    border-radius: var(--radius); padding: 36px 32px; color: white;
+    margin-bottom: 16px; position: relative; overflow: hidden;
+  }
+  .report-header::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 240px; height: 240px;
+    background: radial-gradient(circle, rgba(59,130,246,0.25) 0%, transparent 70%);
+  }
+  .report-header::after {
+    content: ''; position: absolute; bottom: -40px; left: 40px;
+    width: 160px; height: 160px;
+    background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%);
+  }
+  .report-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 100px; padding: 5px 12px;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: rgba(255,255,255,0.8);
+    margin-bottom: 16px;
+  }
+  .report-title-main {
+    font-family: 'Syne', sans-serif; font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 800; line-height: 1.15; margin-bottom: 8px; position: relative; z-index: 1;
+  }
+  .report-title-main span { color: #60a5fa; }
+  .report-meta {
+    font-size: 0.85rem; color: rgba(255,255,255,0.55);
+    position: relative; z-index: 1;
+  }
+  .report-score-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm); padding: 10px 16px; margin-top: 16px;
+    position: relative; z-index: 1;
+  }
+  .report-score-num {
+    font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800;
+  }
+  .report-score-label { font-size: 0.82rem; color: rgba(255,255,255,0.6); line-height: 1.3; }
+
+  /* Report sections */
+  .report-section {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 16px;
+    box-shadow: var(--shadow-sm); overflow: hidden;
+  }
+  .report-section-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+  }
+  .section-icon.red { background: var(--red-light); }
+  .section-icon.blue { background: var(--blue-light); }
+  .section-icon.green { background: var(--green-light); }
+  .section-icon.purple { background: var(--purple-light); }
+  .section-icon.yellow { background: var(--yellow-light); }
+  .section-icon.dark { background: #f1f5f9; }
+  .section-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 2px;
+  }
+  .section-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+  .report-section-body { padding: 24px; }
+
+  /* Diagnosis */
+  .diag-score-bar {
+    background: var(--bg); border-radius: 100px; height: 10px; overflow: hidden; margin: 12px 0 6px;
+  }
+  .diag-score-fill {
+    height: 100%; border-radius: 100px;
+    transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+  }
+  .diag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .diag-item {
+    background: var(--bg); border-radius: var(--radius-sm); padding: 14px;
+    border: 1px solid var(--border);
+  }
+  .diag-item-label { font-size: 0.75rem; font-weight: 600; color: var(--muted); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .diag-item-val { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; }
+  .diag-item-val.red { color: var(--red); }
+  .diag-item-val.yellow { color: var(--yellow); }
+  .diag-item-val.green { color: var(--green); }
+
+  /* Callout boxes */
+  .callout {
+    border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0;
+    display: flex; align-items: flex-start; gap: 10px; font-size: 0.88rem; line-height: 1.5;
+  }
+  .callout.red { background: var(--red-light); border-left: 3px solid var(--red); }
+  .callout.yellow { background: var(--yellow-light); border-left: 3px solid var(--yellow); }
+  .callout.green { background: var(--green-light); border-left: 3px solid var(--green); }
+  .callout.blue { background: var(--blue-light); border-left: 3px solid var(--blue); }
+  .callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout strong { font-weight: 600; display: block; margin-bottom: 2px; }
+
+  /* LinkedIn tips */
+  .tip-card {
+    background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 16px; margin-bottom: 10px;
+  }
+  .tip-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .tip-title { font-weight: 600; font-size: 0.9rem; }
+  .tip-badge {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+    padding: 2px 8px; border-radius: 100px; text-transform: uppercase;
+  }
+  .tip-badge.critical { background: var(--red-light); color: var(--red); }
+  .tip-badge.high { background: var(--yellow-light); color: #b45309; }
+  .tip-badge.medium { background: var(--blue-light); color: var(--blue); }
+  .tip-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+  .tip-example {
+    margin-top: 8px; background: var(--white); border: 1px solid var(--border);
+    border-radius: 8px; padding: 10px 12px; font-size: 0.82rem;
+    font-style: italic; color: var(--text);
+  }
+  .tip-example::before { content: '✨ '; }
+
+  /* Keywords */
+  .keyword-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .keyword-tag {
+    background: var(--blue-light); color: var(--blue);
+    font-size: 0.8rem; font-weight: 600;
+    padding: 5px 12px; border-radius: 100px; border: 1px solid #bfdbfe;
+  }
+
+  /* Action Plan */
+  .action-day { margin-bottom: 16px; }
+  .action-day-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .day-badge {
+    background: var(--text); color: var(--white);
+    font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 800;
+    padding: 4px 10px; border-radius: 100px; letter-spacing: 0.04em; white-space: nowrap;
+  }
+  .day-title { font-weight: 600; font-size: 0.95rem; }
+  .action-list { display: flex; flex-direction: column; gap: 8px; }
+  .action-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: var(--bg); border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 0.85rem; border: 1px solid var(--border);
+  }
+  .action-check {
+    width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border);
+    flex-shrink: 0; margin-top: 1px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .action-check.done { background: var(--green); border-color: var(--green); color: white; font-size: 0.7rem; }
+  .action-text { flex: 1; line-height: 1.5; }
+  .action-text strong { display: block; font-weight: 600; font-size: 0.88rem; margin-bottom: 2px; }
+  .action-text span { color: var(--muted); font-size: 0.8rem; }
+
+  /* Opportunities */
+  .opp-card {
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 18px; margin-bottom: 12px; display: flex; gap: 14px; align-items: flex-start;
+    background: var(--white);
+  }
+  .opp-icon { font-size: 1.6rem; flex-shrink: 0; }
+  .opp-title { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+  .opp-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.5; }
+  .opp-action {
+    display: inline-block; margin-top: 8px;
+    font-size: 0.78rem; font-weight: 700; color: var(--blue);
+    background: var(--blue-light); padding: 4px 10px; border-radius: 100px;
+  }
+
+  /* Domain suggestion */
+  .domain-box {
+    background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+    border: 1.5px solid #c7d7fd; border-radius: var(--radius-sm);
+    padding: 16px 20px; margin-top: 12px;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .domain-name { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--blue); }
+  .domain-status { font-size: 0.75rem; font-weight: 600; color: var(--green); background: var(--green-light); padding: 3px 8px; border-radius: 100px; }
+
+  /* Download button */
+  .download-section {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; text-align: center;
+    box-shadow: var(--shadow-md); margin-bottom: 16px;
+  }
+  .download-section h3 { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .download-section p { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; }
+  .download-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 14px 28px; background: var(--text); color: white;
+    font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700;
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .download-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+  .download-btn:active { transform: translateY(0); }
+
+  footer { border-top: 1px solid var(--border); padding: 24px; text-align: center; font-size: 0.78rem; color: var(--muted); }
+
+  /* Gap utility */
+  .gap-up { margin-bottom: 20px; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 48px 16px 32px; }
+    .hero-card { padding: 24px 20px; }
+    .platform-grid { grid-template-columns: 1fr 1fr; }
+    .locked-grid { grid-template-columns: 1fr 1fr; }
+    .insight-block { padding: 24px 20px; }
+    #results { padding: 0 16px 60px; }
+    .score-card { padding: 28px 20px; }
+    .hero-trust { flex-direction: column; gap: 8px; }
+    .diag-grid { grid-template-columns: 1fr 1fr; }
+    .report-header { padding: 24px 20px; }
+    .report-section-body { padding: 16px; }
+  }
+  @media (max-width: 380px) {
+    .platform-grid { grid-template-columns: 1fr; }
+    h1 { font-size: 2rem; }
+    .diag-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo"><span>G</span>oogle Me Score</div>
+  <div class="nav-badge">🔒 ₹9 UNLOCK</div>
+</nav>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-name">Scanning your presence...</div>
+  <div class="loading-sub">Checking 5 platforms in real time</div>
+  <div class="loading-steps">
+    <div class="loading-step" id="step1">Scanning Google Search results</div>
+    <div class="loading-step" id="step2">Checking LinkedIn visibility</div>
+    <div class="loading-step" id="step3">Analyzing social footprint</div>
+    <div class="loading-step" id="step4">Calculating reputation score</div>
+  </div>
+</div>
+
+<!-- HERO SECTION -->
+<section class="hero" id="hero">
+  <div class="hero-eyebrow">
+    <div class="dot"></div>
+    1,247 people checked their score today
+  </div>
+  <h1>What does<br>Google say<br>about <em>you?</em></h1>
+  <p class="hero-sub">People judge you in seconds. See your real first impression — before a recruiter, client, or date does.</p>
+  <div class="hero-card">
+    <div class="input-group">
+      <label>Your Full Name</label>
+      <input type="text" id="nameInput" placeholder="e.g. Arjun Sharma" autocomplete="name">
+    </div>
+    <div class="input-group">
+      <label>Profession <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <input type="text" id="profInput" placeholder="e.g. Software Engineer, Freelancer">
+    </div>
+    <button class="cta-btn" onclick="checkScore()">
+      Check My Score
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+  <div class="hero-trust">
+    <span>🔒 Private & secure</span>
+    <span>⚡ Results in 5 seconds</span>
+    <span>✅ Free to check</span>
+  </div>
+</section>
+
+<!-- RESULTS SECTION -->
+<div id="results">
+
+  <div class="score-card" id="scoreCard" style="--score-color: var(--red)">
+    <div class="score-name" id="scoreName">YOUR NAME</div>
+    <div class="score-ring">
+      <svg viewBox="0 0 160 160" width="160" height="160">
+        <circle class="ring-bg" cx="80" cy="80" r="70" />
+        <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="70" stroke-dasharray="439.8" stroke-dashoffset="439.8" />
+      </svg>
+      <div>
+        <div class="score-num"><span id="scoreNum">0</span><span class="score-denom">/100</span></div>
+      </div>
+    </div>
+    <div class="score-label" id="scoreLabel">Weak Presence</div>
+    <div class="score-brutal" id="scoreBrutal"><strong>You're being overlooked online.</strong> Recruiters and clients can't find you — so they move on.</div>
+  </div>
+
+  <p class="section-title">Platform Breakdown</p>
+  <div class="platform-grid" id="platformGrid"></div>
+
+  <div class="insight-block gap-up">
+    <div class="insight-tag">Reputation Insight</div>
+    <div class="insight-text" id="insightText">"You exist online. But you don't show up where it matters."</div>
+    <div class="insight-sub" id="insightSub">When a recruiter Googles your name, the first 5 results define your career. Right now, yours are either blank — or worse, irrelevant.</div>
+  </div>
+
+  <!-- LOCKED SECTION -->
+  <div class="locked-section gap-up" id="lockedSection">
+    <div class="locked-header">
+      <h3>🔒 Full Report — 6 Sections Locked</h3>
+      <p>Pay once. Get the full picture. Fix it permanently.</p>
+    </div>
+    <div class="locked-grid">
+      <div class="locked-item"><div class="locked-item-icon">📊</div><div class="locked-item-title">Reputation Diagnosis</div><div class="locked-item-desc">What your score actually means</div></div>
+      <div class="locked-item"><div class="locked-item-icon">🎯</div><div class="locked-item-title">First Impression Analysis</div><div class="locked-item-desc">What recruiters see & feel</div></div>
+      <div class="locked-item"><div class="locked-item-icon">💼</div><div class="locked-item-title">LinkedIn Deep Audit</div><div class="locked-item-desc">Headline, keywords, visibility</div></div>
+      <div class="locked-item"><div class="locked-item-icon">🚀</div><div class="locked-item-title">90-Day Action Plan</div><div class="locked-item-desc">Day-by-day roadmap to 90+</div></div>
+    </div>
+    <div class="locked-overlay" id="lockedOverlay">
+      <div class="lock-icon">🔒</div>
+      <h4>Right now, you're invisible where it matters.</h4>
+      <p>Unlock the full report — find out exactly why, and how to fix it.</p>
+      <button class="pay-btn" id="payBtn" onclick="handlePayment()">
+        Unlock Full Report — ₹9
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="ipaid-btn" id="ipaidBtn" onclick="unlockReport()">
+        ✓ I Paid — Unlock My Report
+      </button>
+      <div class="pay-sub" style="margin-top:10px;">
+        <span>🔒 Razorpay secured</span>
+        <span>⚡ Instant access</span>
+        <span>✅ One-time only</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREMIUM REPORT (hidden until unlock) -->
+  <div id="premiumReport">
+
+    <!-- Report Header -->
+    <div class="report-header">
+      <div class="report-badge">✦ Premium Report · Unlocked</div>
+      <div class="report-title-main">SearchMe Reputation<br>Report for <span id="rptName">You</span></div>
+      <div class="report-meta" id="rptMeta">Generated on <span id="rptDate"></span> · Confidential</div>
+      <div class="report-score-pill">
+        <div>
+          <div class="report-score-num" id="rptScore" style="color:#e63946">42</div>
+        </div>
+        <div class="report-score-label">Your Google<br>Presence Score</div>
+      </div>
+    </div>
+
+    <!-- SECTION A: Reputation Diagnosis -->
+    <div class="report-section">
+      <div class="report-section-header">
+        <div class="section-icon red">📊</div>
+        <div>
+          <div class="section-label">Section A</div>
+          <div class="section-name">Reputation Diagnosis</div>
+        </div>
+      </div>
+      <div class="report-section-body">
+        <p id="diagText" style="font-size:0.92rem;line-height:1.7;margin-bottom:16px;"></p>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em;">Presence Strength</div>
+        <div class="diag-score-bar"><div class="diag-score-fill" id="diagBar" style="width:0%;background:var(--red)"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--muted);margin-bottom:16px;"><span>Invisible</span><span>Dominant</span></div>
+        <div class="diag-grid">
+          <div class="diag-item"><div class="diag-item-label">Search Rank</div><div class="diag-item-val" id="diagRank"></div></div>
+          <div class="diag-item"><div class="diag-item-label">Trust Level</div><div class="diag-item-val" id="diagTrust"></div></div>
+          <div class="diag-item"><div class="diag-item-label">Platforms Active</div><div class="diag-item-val" id="diagPlat"></div></div>
+          <div class="diag-item"><div class="diag-item-label">Growth Potential</div><div class="diag-item-val green">High ↑</div></div>
+        </div>
+        <div class="callout red" style="margin-top:16px;">
+          <div class="callout-icon">⚠️</div>
+          <div><strong>Critical Gap Identified</strong><span id="diagGap"></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION B: First Impression -->
+    <div class="report-section">
+      <div class="report-section-header">
+        <div class="section-icon blue">👁️</div>
+        <div>
+          <div class="section-label">Section B</div>
+          <div class="section-name">First Impression Analysis</div>
+        </div>
+      </div>
+      <div class="report-section-body">
+        <p style="font-size:0.92rem;line-height:1.7;margin-bottom:16px;" id="impText"></p>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;margin-bottom:16px;">
+          <div style="font-size:0.75rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;">What a recruiter thinks in 7 seconds</div>
+          <div id="recruiterThoughts"></div>
+        </div>
+        <div class="callout yellow">
+          <div class="callout-icon">💡</div>
+          <div><strong>The Core Problem</strong> You're not being judged on your skills — you're being judged on your silence. No digital footprint = no trust.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION C: LinkedIn -->
+    <div class="report-section">
+      <div class="report-section-header">
+        <div class="section-icon blue">💼</div>
+        <div>
+          <div class="section-label">Section C</div>
+          <div class="section-name">LinkedIn Optimization</div>
+        </div>
+      </div>
+      <div class="report-section-body">
+        <p style="font-size:0.9rem;color:var(--muted);line-height:1.6;margin-bottom:20px;" id="liText"></p>
+        <div id="liTips"></div>
+        <div style="margin-top:20px;">
+          <div style="font-size:0.85rem;font-weight:600;margin-bottom:8px;">Power Keywords to Add to Your Profile</div>
+          <div class="keyword-wrap" id="keywords"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION D: Search Visibility -->
+    <div class="report-section">
+      <div class="report-section-header">
+        <div class="section-icon green">🔍</div>
+        <div>
+          <div class="section-label">Section D</div>
+          <div class="section-name">Search Visibility Strategy</div>
+        </div>
+      </div>
+      <div class="report-section-body">
+        <p style="font-size:0.92rem;line-height:1.7;margin-bottom:16px;" id="seoText"></p>
+        <div id="seoTips"></div>
+        <div class="callout green" style="margin-top:16px;">
+          <div class="callout-icon">🚀</div>
+          <div><strong>The 30-Day Ranking Move</strong> Publish one piece of long-form content per week on LinkedIn. Google indexes LinkedIn fast — within 4 weeks, your name can appear on page 1 for your target keywords.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION E: Action Plan -->
+    <div class="report-section">
+      <div class="report-section-header">
+        <div class="section-icon purple">🗓️</div>
+        <div>
+          <div class="section-label">Section E</div>
+          <div class="section-name">Step-by-Step Action Plan</div>
+        </div>
+      </div>
+      <div class="report-section-body">
+        <p style="font-size:0.88rem;color:var(--muted);margin-bottom:20px;">Click each task to mark it done. Build the habit — your score improves every week you execute.</p>
+        <div id="actionPlan"></div>
+      </div>
+    </div>
+
+    <!-- SECTION F: Hidden Opportunities -->
+    <div class="report-section">
+      <div class="report-section-header">
+        <div class="section-icon dark">💡</div>
+        <div>
+          <div class="section-label">Section F</div>
+          <div class="section-name">Hidden Opportunities</div>
+        </div>
+      </div>
+      <div class="report-section-body" id="oppBody"></div>
+    </div>
+
+    <!-- DOWNLOAD SECTION -->
+    <div class="download-section">
+      <h3>📄 Your report is ready to download</h3>
+      <p>Save a professional PDF copy to share with mentors, or reference while building your presence.</p>
+      <button class="download-btn" onclick="downloadPDF()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download My Report (PDF)
+      </button>
+      <div style="margin-top:10px;font-size:0.78rem;color:var(--muted);">Free · No email required · Yours to keep</div>
+    </div>
+
+  </div><!-- end premiumReport -->
+
+  <!-- Social Proof -->
+  <div class="social-proof">
+    <div class="avatars">
+      <div class="avatar" style="background:#e63946">A</div>
+      <div class="avatar" style="background:#2a9d8f">P</div>
+      <div class="avatar" style="background:#f4a261">R</div>
+      <div class="avatar" style="background:#457b9d">S</div>
+      <div class="avatar" style="background:#6a4c93">N</div>
+    </div>
+    <div class="social-proof-text">
+      <strong>1,000+ people checked today</strong>
+      <span>Most were shocked by what they found</span>
+    </div>
+    <div class="live-dot"></div>
+  </div>
+
+</div><!-- end results -->
+
+<footer>© 2025 Google Me Score &nbsp;·&nbsp; Not affiliated with Google &nbsp;·&nbsp; <a href="#" style="color:inherit">Privacy</a></footer>
+
+<script>
+const PLATFORMS = [
+  { name: 'LinkedIn',  icon: '💼', bg: '#e8f0fe', baseScore: 18, baseStatus: 'missing' },
+  { name: 'GitHub',    icon: '🐙', bg: '#f0fff4', baseScore: 0,  baseStatus: 'missing' },
+  { name: 'Instagram', icon: '📸', bg: '#fce4ec', baseScore: 12, baseStatus: 'present' },
+  { name: 'YouTube',   icon: '▶️', bg: '#fff3e0', baseScore: 0,  baseStatus: 'missing' },
+  { name: 'Twitter/X', icon: '𝕏', bg: '#f5f5f5', baseScore: 8,  baseStatus: 'present' },
+  { name: 'Google',    icon: '🔍', bg: '#e8f0fe', baseScore: 4,  baseStatus: 'present' },
+];
+
+const SCORE_DATA = {
+  low:  { label: 'Weak Presence',    color: 'var(--red)',    brutal: '<strong>You\'re invisible where it matters.</strong> Recruiters Google you, find nothing relevant, and move on in 4 seconds.', insight: '"You exist online. But you don\'t show up where it matters."', insightSub: 'When someone Googles your name, the first 5 results define how they see you. Right now, yours are blank — or worse, completely irrelevant to your career goals.' },
+  mid:  { label: 'Average Presence', color: 'var(--yellow)', brutal: '<strong>You\'re forgettable online.</strong> You show up — but there\'s nothing that makes a recruiter stop and pay attention.', insight: '"You\'re findable. But you\'re not memorable."', insightSub: 'Being findable isn\'t enough anymore. Your competitors are publishing content, collecting endorsements, and building trust — while your profile stays frozen in time.' },
+  high: { label: 'Strong Presence',  color: 'var(--green)',  brutal: '<strong>You\'re visible — but not yet the obvious choice.</strong> A few precise moves could put you on every recruiter\'s shortlist.', insight: '"You\'re ahead of most. But the top 10% are doing things you\'re not."', insightSub: 'You\'ve built the foundation. But the people who get unsolicited job offers, inbound clients, and speaking invites are doing 4 specific things you\'re currently missing.' },
+};
+
+let _name = '', _prof = '', _score = 0, _band = 'low', _platforms = [];
+
+function getScoreBand(s) { return s < 40 ? 'low' : s < 70 ? 'mid' : 'high'; }
+
+function animateScore(target) {
+  const el = document.getElementById('scoreNum');
+  const ring = document.getElementById('ringFill');
+  const circumference = 439.8;
+  const duration = 1600, start = performance.now();
+  function step(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const e = 1 - Math.pow(1 - p, 3);
+    const cur = Math.round(e * target);
+    el.textContent = cur;
+    ring.style.strokeDashoffset = circumference - (circumference * cur / 100);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function renderPlatforms(name, score) {
+  const grid = document.getElementById('platformGrid');
+  grid.innerHTML = '';
+  const hash = name.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+  _platforms = PLATFORMS.map((p, i) => {
+    let pScore = p.baseScore, pStatus = p.baseStatus;
+    if (i === 1 && (hash % 3 === 0)) { pScore = 9; pStatus = 'present'; }
+    if (i === 3 && (hash % 4 === 0)) { pScore = 7; pStatus = 'present'; }
+    return { ...p, score: pScore, status: pStatus };
+  });
+  _platforms.forEach((p, i) => {
+    const card = document.createElement('div');
+    card.className = 'platform-card';
+    card.style.animationDelay = (i * 0.07) + 's';
+    card.innerHTML = `
+      <div class="p-icon" style="background:${p.bg}">${p.icon}</div>
+      <div class="p-info">
+        <div class="p-name">${p.name}</div>
+        <div class="p-status ${p.status}">${p.status === 'present' ? '● Present' : '○ Missing'}</div>
+      </div>
+      <div class="p-score" style="color:${p.status==='present'?'var(--green)':'var(--red)'}">${p.score > 0 ? '+'+p.score : '—'}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function setScoreUI(score, name, prof) {
+  _band = getScoreBand(score);
+  const data = SCORE_DATA[_band];
+  const card = document.getElementById('scoreCard');
+  card.style.setProperty('--score-color', data.color);
+  const ring = document.getElementById('ringFill');
+  ring.style.stroke = _band==='low'?'#e63946':_band==='mid'?'#f4a261':'#2a9d8f';
+  document.getElementById('scoreName').textContent = name.toUpperCase() + (prof ? ` • ${prof.toUpperCase()}` : '');
+  document.getElementById('scoreLabel').textContent = data.label;
+  document.getElementById('scoreBrutal').innerHTML = data.brutal;
+  document.getElementById('insightText').textContent = data.insight;
+  document.getElementById('insightSub').textContent = data.insightSub;
+  animateScore(score);
+}
+
+function generateScore(name) {
+  const hash = name.split('').reduce((a, c, i) => a + c.charCodeAt(0) * (i + 1), 0);
+  return Math.min(Math.max(28 + (hash % 45), 22), 68);
+}
+
+function checkScore() {
+  _name = document.getElementById('nameInput').value.trim();
+  _prof = document.getElementById('profInput').value.trim();
+  if (!_name) {
+    document.getElementById('nameInput').focus();
+    document.getElementById('nameInput').style.borderColor = 'var(--red)';
+    setTimeout(() => document.getElementById('nameInput').style.borderColor = '', 1500);
+    return;
+  }
+  document.getElementById('loading-name').textContent = `Scanning "${_name}"...`;
+  const overlay = document.getElementById('loading');
+  overlay.classList.add('active');
+  ['step1','step2','step3','step4'].forEach((id, i) => {
+    document.getElementById(id).classList.remove('done');
+    setTimeout(() => document.getElementById(id).classList.add('done'), 600 + i * 600);
+  });
+  setTimeout(() => {
+    overlay.classList.remove('active');
+    _score = generateScore(_name);
+    document.getElementById('hero').style.display = 'none';
+    const results = document.getElementById('results');
+    results.classList.add('visible');
+    results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setScoreUI(_score, _name, _prof);
+    renderPlatforms(_name, _score);
+  }, 3200);
+}
+
+// ── PAYMENT FLOW ──
+function handlePayment() {
+  const btn = document.getElementById('payBtn');
+  btn.innerHTML = '🔓 Opening secure payment...';
+  btn.style.opacity = '0.75';
+  btn.disabled = true;
+
+  // Open Razorpay link
+  window.open('https://rzp.io/rzp/PUNs9XqO', '_blank');
+
+  // After 2 seconds show "I Paid" button
+  setTimeout(() => {
+    btn.innerHTML = 'Unlock Full Report — ₹9 →';
+    btn.style.opacity = '1';
+    btn.disabled = false;
+    const ipaid = document.getElementById('ipaidBtn');
+    ipaid.classList.add('show');
+    ipaid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 2000);
+}
+
+// ── UNLOCK REPORT ──
+function unlockReport() {
+  // Hide locked section
+  const locked = document.getElementById('lockedSection');
+  locked.style.transition = 'opacity 0.4s, transform 0.4s';
+  locked.style.opacity = '0';
+  locked.style.transform = 'translateY(-10px)';
+  setTimeout(() => { locked.style.display = 'none'; }, 400);
+
+  // Build and reveal premium report
+  buildPremiumReport(_name, _prof, _score, _band, _platforms);
+  const report = document.getElementById('premiumReport');
+  report.classList.add('revealed');
+  setTimeout(() => { report.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 450);
+}
+
+// ── BUILD PREMIUM REPORT ──
+function buildPremiumReport(name, prof, score, band, platforms) {
+  const fn = name.split(' ')[0];
+  const profLabel = prof || 'Professional';
+  const today = new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' });
+  const scoreColor = band==='low'?'#e63946':band==='mid'?'#f4a261':'#2a9d8f';
+  const presentCount = platforms.filter(p => p.status === 'present').length;
+  const missingCount = platforms.filter(p => p.status === 'missing').length;
+
+  document.getElementById('rptName').textContent = name;
+  document.getElementById('rptDate').textContent = today;
+  document.getElementById('rptScore').textContent = score;
+  document.getElementById('rptScore').style.color = scoreColor;
+
+  // ── SECTION A: Diagnosis ──
+  const diagTexts = {
+    low: `${fn}, your score of ${score}/100 puts you in the bottom 30% of online visibility for ${profLabel}s in India. This isn't about your skills — it's about your digital silence. Google can't show what doesn't exist. Every day you stay invisible, someone with half your ability but twice your online presence is winning the opportunities meant for you.`,
+    mid: `${fn}, your ${score}/100 score means you're searchable — but forgettable. You have a presence, but it doesn't build trust or authority. Think of it this way: you show up at the party, but nobody remembers you were there. The gap between where you are and where you need to be is 3–4 strategic moves — not months of work.`,
+    high: `${fn}, a ${score}/100 is genuinely strong — you're ahead of 65% of ${profLabel}s your level. But "strong" won't get you the inbound opportunities. The people getting unsolicited recruiter calls and client referrals are sitting at 85+. You're close. Four specific gaps are holding your score back, and each one is fixable within a month.`
+  };
+  document.getElementById('diagText').textContent = diagTexts[band];
+
+  // Animate bar after slight delay
+  setTimeout(() => {
+    document.getElementById('diagBar').style.width = score + '%';
+    document.getElementById('diagBar').style.background = scoreColor;
+  }, 300);
+
+  const rankMap = { low: 'Page 3+', mid: 'Page 1–2', high: 'Page 1' };
+  const trustMap = { low: 'Very Low', mid: 'Moderate', high: 'Good' };
+  const trustColor = { low: 'red', mid: 'yellow', high: 'green' };
+  document.getElementById('diagRank').textContent = rankMap[band];
+  document.getElementById('diagRank').className = 'diag-item-val ' + (band === 'high' ? 'green' : band === 'mid' ? 'yellow' : 'red');
+  document.getElementById('diagTrust').textContent = trustMap[band];
+  document.getElementById('diagTrust').className = 'diag-item-val ' + trustColor[band];
+  document.getElementById('diagPlat').textContent = `${presentCount} of 6`;
+  document.getElementById('diagPlat').className = 'diag-item-val ' + (presentCount >= 4 ? 'green' : presentCount >= 2 ? 'yellow' : 'red');
+
+  const gapTexts = {
+    low: `${missingCount} key platforms are completely missing from your profile. LinkedIn — the single most important platform for ${profLabel}s — shows no strong signal. This alone costs you at least 25 points.`,
+    mid: `Your profiles exist but aren't optimized. A recruiter searching "${fn} ${profLabel}" will find you — but won't feel compelled to click. No publications, no content, no proof of expertise.`,
+    high: `You're active but not authoritative. You're missing a personal domain, long-form content, and cross-platform consistency — the three signals Google uses to elevate profiles above the fold.`
+  };
+  document.getElementById('diagGap').textContent = gapTexts[band];
+
+  // ── SECTION B: First Impression ──
+  const impTexts = {
+    low: `When a recruiter searches for "${name}" right now, here's what they get: a thin social presence, no LinkedIn profile that clearly communicates your value, and nothing that says "hire this person." In 7 seconds, they've already moved to the next candidate. You never even got a chance.`,
+    mid: `Searching "${name}" brings up your profiles — but nothing that makes someone lean forward. No articles, no case studies, no third-party validation. You look like someone who does the work but doesn't show it. In a world where perception is reality, that's an expensive position to be in.`,
+    high: `Your name returns decent results — a LinkedIn profile, maybe some social activity. But the top candidates in your field have a body of work that precedes them: they're quoted, published, and recommended. You're currently ranked, but not trusted at first glance.`
+  };
+  document.getElementById('impText').textContent = impTexts[band];
+
+  const thoughtsMap = {
+    low: [
+      { icon: '🔴', text: '"I can\'t find much about them..."', weight: '600' },
+      { icon: '🔴', text: '"No LinkedIn? That\'s a red flag."' },
+      { icon: '🟡', text: '"Their Instagram is there but not professional."' },
+      { icon: '🔴', text: '"I\'ll go with the candidate I can actually research."' },
+    ],
+    mid: [
+      { icon: '🟡', text: '"They\'re there, but nothing stands out..."' },
+      { icon: '🟡', text: '"LinkedIn looks incomplete — no headline that tells me anything."' },
+      { icon: '🟢', text: '"At least they\'re active online."' },
+      { icon: '🟡', text: '"I\'d need to dig deeper. Let me look at the next candidate first."' },
+    ],
+    high: [
+      { icon: '🟢', text: '"Good — they have a presence."' },
+      { icon: '🟡', text: '"LinkedIn looks decent but not senior-level."' },
+      { icon: '🟢', text: '"Some content activity. Good sign."' },
+      { icon: '🟡', text: '"Nothing that makes them stand out from the other 3 candidates."' },
+    ]
+  };
+  const thoughtsEl = document.getElementById('recruiterThoughts');
+  thoughtsEl.innerHTML = '';
+  thoughtsMap[band].forEach(t => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:0.85rem;line-height:1.5;';
+    div.innerHTML = `<span style="flex-shrink:0">${t.icon}</span><span style="font-weight:${t.weight||'400'}">${t.text}</span>`;
+    thoughtsEl.appendChild(div);
+  });
+
+  // ── SECTION C: LinkedIn ──
+  const liTexts = {
+    low: `LinkedIn is Google's favourite result for professional names. It almost always appears in the top 3 search results. Right now, ${fn}, your LinkedIn either doesn't exist, or it's so sparse that Google doesn't consider it worth showing. This is your #1 priority.`,
+    mid: `LinkedIn is there, but it's not doing the heavy lifting it should. Your headline likely reads like a job title rather than a value proposition. Your About section probably sounds like a CV summary. And your keywords are generic at best. These aren't minor edits — they're the difference between being found and being skipped.`,
+    high: `Your LinkedIn profile is functional, but it isn't a conversion machine. Recruiters who land on your profile should feel an immediate sense of credibility and expertise. Right now, there are gaps in your social proof, content signals, and keyword targeting that are costing you visibility.`
+  };
+  document.getElementById('liText').textContent = liTexts[band];
+
+  const tipsEl = document.getElementById('liTips');
+  const kw = prof ? prof.split(' ').slice(0,2).join(', ') : '';
+  const kwBase = ['Open to Work', 'Problem Solver', 'LinkedIn Top Voice'];
+  const profKw = prof ? [prof, `Senior ${prof}`, `${prof} Expert`, `${prof} Consultant`] : ['Professional', 'Expert', 'Consultant'];
+
+  const tips = [
+    {
+      title: 'Rewrite Your Headline Immediately',
+      badge: 'critical', badgeLabel: 'Critical',
+      desc: `Your headline is the #1 ranking factor on LinkedIn. It shows up in Google results. Right now, it's either blank or just your job title — which tells nobody anything about your value.`,
+      example: `"${profLabel} helping companies solve X | Y years building Z | ${fn}.in"`
+    },
+    {
+      title: 'Optimize Your About Section',
+      badge: 'high', badgeLabel: 'High Impact',
+      desc: `The first 3 lines of your About section are visible without clicking "see more." This is your 7-second pitch. Lead with the problem you solve, not with where you studied.`,
+      example: `"I help [target audience] achieve [specific result] through [your method]. ${profLabel} with focus on [specialty]. DMs open."`
+    },
+    {
+      title: 'Turn On Creator Mode',
+      badge: 'high', badgeLabel: 'High Impact',
+      desc: 'Creator Mode moves your Featured section to the top of your profile and increases visibility in search results.',
+      example: 'Feature your best posts, portfolio, or proof of work at the top.'
+    },
+    {
+      title: 'Get 5 Specific Skill Endorsements',
+      badge: 'medium', badgeLabel: 'Medium',
+      desc: `Generic endorsements for "Leadership" and "Communication" are worthless. Ask 5 colleagues to endorse you for your 3 most specific skills. Specificity builds trust; generic endorsements don't.`
+    }
+  ];
+  tipsEl.innerHTML = '';
+  tips.forEach(t => {
+    tipsEl.innerHTML += `
+      <div class="tip-card">
+        <div class="tip-card-header">
+          <div class="tip-title">${t.title}</div>
+          <div class="tip-badge ${t.badge}">${t.badgeLabel}</div>
+        </div>
+        <div class="tip-desc">${t.desc}</div>
+        ${t.example ? `<div class="tip-example">${t.example}</div>` : ''}
+      </div>
+    `;
+  });
+
+  const allKw = [...profKw, ...kwBase, 'Available for Projects', 'Open to Opportunities'];
+  document.getElementById('keywords').innerHTML = allKw.slice(0,8).map(k => `<span class="keyword-tag">${k}</span>`).join('');
+
+  // ── SECTION D: SEO ──
+  const seoText = {
+    low: `Google has no idea who ${name} is in a professional context. The signals it needs — content, backlinks, social authority, a personal website — are all missing. You're relying on other people to define you. They're not. The result is a blank or irrelevant search result when someone looks you up.`,
+    mid: `You rank, but you don't dominate. If someone Googles your exact name they'll find you — but you're competing with every other ${name || 'person'} out there. Without a personal domain or authoritative content, you'll never fully own your name on Google.`,
+    high: `You're ranking, but not for the right terms. Your name appears, but "${name} ${profLabel}" may not return a clear, compelling professional result. The content signals that push you to the top 3 — long-form posts, external mentions, a personal site — need strengthening.`
+  };
+  document.getElementById('seoText').textContent = seoText[band];
+
+  const slug = name.toLowerCase().replace(/\s+/g, '');
+  document.getElementById('seoTips').innerHTML = `
+    <div class="tip-card">
+      <div class="tip-card-header"><div class="tip-title">Register Your Personal Domain</div><div class="tip-badge critical">Critical</div></div>
+      <div class="tip-desc">Your own domain is the single strongest signal to Google that you own your name. Even a one-page site outranks most social profiles within 60 days.</div>
+      <div class="domain-box">
+        <div><div style="font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">Suggested Domain</div><div class="domain-name">${slug}.in</div></div>
+        <div class="domain-status">Check availability →</div>
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-header"><div class="tip-title">Publish Weekly on LinkedIn</div><div class="tip-badge high">High Impact</div></div>
+      <div class="tip-desc">LinkedIn posts indexed by Google within 24–48 hours. One 800-word post per week, using your target keywords naturally, will push your profile to page 1 results within 30 days. Google trusts LinkedIn — use it.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-header"><div class="tip-title">Get Featured in Online Publications</div><div class="tip-badge medium">Medium</div></div>
+      <div class="tip-desc">Guest posts, quotes in articles, or podcast appearances create backlinks to your name. Each external mention is a vote of credibility that Google weighs heavily. Start with niche newsletters and LinkedIn articles.</div>
+    </div>
+  `;
+
+  // ── SECTION E: Action Plan ──
+  const days = [
+    {
+      label: 'Day 1', title: 'Fix the Foundations',
+      tasks: [
+        { title: 'Rewrite your LinkedIn headline', desc: 'Use the formula: [Role] helping [audience] achieve [result]' },
+        { title: 'Update LinkedIn About section', desc: 'Open with a hook. Tell the story of the problem you solve.' },
+        { title: 'Add/update your profile photo', desc: 'Clear face, professional background, good lighting. Simple.' },
+      ]
+    },
+    {
+      label: 'Day 2', title: 'Claim Your Territory',
+      tasks: [
+        { title: `Register ${slug}.in or ${slug}.com`, desc: 'Takes 10 minutes. GoDaddy, Namecheap, or Hostinger.' },
+        { title: 'Set up a minimal personal site', desc: 'Name + what you do + contact. One page is enough to start.' },
+        { title: 'Unify your username across platforms', desc: `Try to get @${slug} on LinkedIn, Instagram, and Twitter.` },
+      ]
+    },
+    {
+      label: 'Day 3', title: 'Build the Signal',
+      tasks: [
+        { title: 'Write your first LinkedIn post', desc: 'Share a lesson from your work this week. 300+ words. No fluff.' },
+        { title: 'Ask 3 colleagues for endorsements', desc: 'Specific skills only. Send a personal message, not a generic request.' },
+        { title: 'Turn on Creator Mode on LinkedIn', desc: 'Settings → Visibility → Creator Mode. Takes 30 seconds.' },
+      ]
+    },
+    {
+      label: 'Week 1', title: 'Build the Momentum',
+      tasks: [
+        { title: 'Post on LinkedIn 3× this week', desc: 'Insights, lessons, questions. Consistency beats viral.' },
+        { title: 'Comment meaningfully on 5 posts/day', desc: 'This puts your name in front of relevant audiences fast.' },
+        { title: 'Set up Google Alerts for your name', desc: 'alerts.google.com → monitor who\'s talking about you.' },
+      ]
+    }
+  ];
+  const planEl = document.getElementById('actionPlan');
+  planEl.innerHTML = '';
+  days.forEach(day => {
+    const div = document.createElement('div');
+    div.className = 'action-day';
+    div.innerHTML = `
+      <div class="action-day-header">
+        <div class="day-badge">${day.label}</div>
+        <div class="day-title">${day.title}</div>
+      </div>
+      <div class="action-list">
+        ${day.tasks.map((t, i) => `
+          <div class="action-item">
+            <div class="action-check" onclick="toggleCheck(this)"></div>
+            <div class="action-text">
+              <strong>${t.title}</strong>
+              <span>${t.desc}</span>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    planEl.appendChild(div);
+  });
+
+  // ── SECTION F: Opportunities ──
+  const profSlug = (prof || 'professional').toLowerCase().replace(/\s+/g,'-');
+  document.getElementById('oppBody').innerHTML = `
+    <p style="font-size:0.88rem;color:var(--muted);margin-bottom:20px;">These are moves most ${profLabel}s at your level haven't made yet. That's exactly why they work.</p>
+    <div class="opp-card">
+      <div class="opp-icon">🌐</div>
+      <div>
+        <div class="opp-title">Own Your Name Online</div>
+        <div class="opp-desc">Register <strong>${slug}.in</strong> and set up a one-page site. A personal domain is the clearest signal to Google — and to people — that you take yourself seriously. 90% of your peers haven't done this. That's your advantage.</div>
+        <div class="opp-action">Register ${slug}.in →</div>
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">✍️</div>
+      <div>
+        <div class="opp-title">Start a Micro Content Strategy</div>
+        <div class="opp-desc">You don't need a blog. You need 1 LinkedIn post per week sharing what you actually know. In 90 days, this compounds into 12 pieces of indexed content — each one pulling your name up in search results.</div>
+        <div class="opp-action">Content ideas for ${profLabel}s →</div>
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">🎙️</div>
+      <div>
+        <div class="opp-title">Get Quoted in Your Niche</div>
+        <div class="opp-desc">HARO (Help a Reporter Out) sends daily emails from journalists looking for expert quotes. One mention in a publication creates a backlink with your name — and Google counts every single one.</div>
+        <div class="opp-action">Try HARO (free) →</div>
+      </div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-icon">🤝</div>
+      <div>
+        <div class="opp-title">Strategic Platform Expansion</div>
+        <div class="opp-desc">The missing platforms in your analysis aren't just for show — each active profile is an indexed page Google can show for your name. Priority order for ${profLabel}s: LinkedIn → Personal site → GitHub/Portfolio → YouTube shorts.</div>
+        <div class="opp-action">See platform roadmap →</div>
+      </div>
+    </div>
+    <div class="callout blue" style="margin-top:4px;">
+      <div class="callout-icon">📈</div>
+      <div><strong>90-Day Projection</strong> If you execute the Day 1–3 tasks and post consistently for 90 days, your score can realistically move to 72–80/100. That's the range where inbound opportunities start happening without you chasing them.</div>
+    </div>
+  `;
+}
+
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  el.textContent = el.classList.contains('done') ? '✓' : '';
+}
+
+// ── PDF DOWNLOAD ──
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const W = 210, margin = 20, cw = W - margin * 2;
+  const scoreColor = _band === 'low' ? [230,57,70] : _band === 'mid' ? [244,162,97] : [42,157,143];
+  let y = 0;
+
+  function addPage() { doc.addPage(); y = margin; }
+  function checkY(need) { if (y + need > 270) addPage(); }
+
+  // Cover page
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, W, 297, 'F');
+
+  // Accent strip
+  doc.setFillColor(...scoreColor);
+  doc.rect(0, 0, 6, 297, 'F');
+
+  // Title
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(28);
+  doc.text('SearchMe', margin, 60);
+  doc.text('Reputation Report', margin, 74);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(148, 163, 184);
+  doc.text(`Prepared for ${_name}`, margin, 90);
+  doc.text(`${_prof ? _prof + ' · ' : ''}${new Date().toLocaleDateString('en-IN', { day:'numeric', month:'long', year:'numeric' })}`, margin, 98);
+
+  // Score box
+  doc.setFillColor(...scoreColor, 0.15);
+  doc.setDrawColor(...scoreColor);
+  doc.setLineWidth(0.5);
+  doc.roundedRect(margin, 115, 80, 45, 4, 4, 'FD');
+  doc.setTextColor(...scoreColor);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(42);
+  doc.text(`${_score}`, margin + 12, 145);
+  doc.setFontSize(16);
+  doc.text('/100', margin + 42, 145);
+  doc.setFontSize(10);
+  doc.setTextColor(148, 163, 184);
+  doc.setFont('helvetica', 'normal');
+  doc.text('Google Presence Score', margin + 5, 154);
+
+  // Status
+  const statusText = SCORE_DATA[_band].label;
+  doc.setFillColor(...scoreColor);
+  doc.roundedRect(margin, 168, 60, 10, 3, 3, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.text(statusText.toUpperCase(), margin + 5, 175);
+
+  // Branding
+  doc.setTextColor(71, 85, 105);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.text('Google Me Score  ·  Confidential Report  ·  Not affiliated with Google', margin, 280);
+
+  // ── PAGE 2: Report content ──
+  addPage();
+
+  function section(title, letter) {
+    checkY(20);
+    doc.setFillColor(...scoreColor);
+    doc.rect(margin, y, 4, 12, 'F');
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(15, 23, 42);
+    doc.text(`${letter}. ${title}`, margin + 8, y + 8.5);
+    y += 18;
+  }
+
+  function bodyText(text, color) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9.5);
+    doc.setTextColor(...(color || [50,50,50]));
+    const lines = doc.splitTextToSize(text, cw);
+    checkY(lines.length * 5 + 2);
+    doc.text(lines, margin, y);
+    y += lines.length * 5 + 4;
+  }
+
+  function calloutBox(text, c) {
+    const lines = doc.splitTextToSize(text, cw - 14);
+    const h = lines.length * 5 + 10;
+    checkY(h + 4);
+    doc.setFillColor(c[0], c[1], c[2], 0.08);
+    doc.setDrawColor(c[0], c[1], c[2]);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(margin, y, cw, h, 3, 3, 'FD');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(50,50,50);
+    doc.text(lines, margin + 7, y + 7);
+    y += h + 6;
+  }
+
+  function bullet(text) {
+    const lines = doc.splitTextToSize(`• ${text}`, cw - 6);
+    checkY(lines.length * 5 + 2);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.setTextColor(60,60,60);
+    doc.text(lines, margin + 4, y);
+    y += lines.length * 5 + 3;
+  }
+
+  function subHead(text) {
+    checkY(10);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.setTextColor(15,23,42);
+    doc.text(text, margin, y);
+    y += 7;
+  }
+
+  const fn = _name.split(' ')[0];
+  const profLabel = _prof || 'Professional';
+  const slug = _name.toLowerCase().replace(/\s+/g, '');
+
+  // Section A
+  section('Reputation Diagnosis', 'A');
+  const dTexts = {
+    low: `${fn}, your score of ${_score}/100 puts you in the bottom 30% of online visibility. This isn't about your skills — it's about your digital silence. Google can't show what doesn't exist.`,
+    mid: `${fn}, your ${_score}/100 score means you're searchable but forgettable. You have a presence, but it doesn't build trust or communicate authority.`,
+    high: `${fn}, a ${_score}/100 is genuinely strong — you're ahead of 65% of ${profLabel}s your level. But the people getting inbound offers are sitting at 85+. Four gaps are holding you back.`
+  };
+  bodyText(dTexts[_band]);
+  const presentCount = _platforms.filter(p => p.status === 'present').length;
+  calloutBox(`Platforms Active: ${presentCount} of 6  |  Search Rank: ${_band==='low'?'Page 3+':_band==='mid'?'Page 1-2':'Page 1'}  |  Trust Level: ${_band==='low'?'Very Low':_band==='mid'?'Moderate':'Good'}`, scoreColor);
+  y += 4;
+
+  // Section B
+  section('First Impression Analysis', 'B');
+  const iTexts = {
+    low: `When a recruiter searches "${_name}", they find a thin presence. No clear professional narrative. In 7 seconds, they've moved to the next candidate.`,
+    mid: `Searching "${_name}" returns your profiles — but nothing makes someone lean forward. No articles, no case studies, no third-party validation.`,
+    high: `Your name returns decent results — but top candidates in your field have a body of work that precedes them. You're ranked, but not trusted at first glance.`
+  };
+  bodyText(iTexts[_band]);
+  calloutBox(`Core Problem: You're not being judged on your skills — you're being judged on your digital silence. No footprint = no trust, regardless of how good you actually are.`, [244, 162, 97]);
+  y += 4;
+
+  // Section C
+  section('LinkedIn Optimization', 'C');
+  subHead('Immediate Actions:');
+  bullet('Rewrite headline: "[Role] helping [audience] achieve [result] | Key skill | Location"');
+  bullet('Open About section with the problem you solve — not where you studied.');
+  bullet('Enable Creator Mode to unlock 3x more profile views.');
+  bullet('Get 5 specific skill endorsements from colleagues this week.');
+  subHead('Power Keywords to Add:');
+  const kwList = _prof ? [_prof, `Senior ${_prof}`, `${_prof} Expert`, 'Open to Work', 'LinkedIn Creator'] : ['Professional', 'Expert', 'Consultant', 'Open to Work'];
+  bodyText(kwList.join('  ·  '));
+  y += 4;
+
+  // Section D
+  section('Search Visibility Strategy', 'D');
+  const seoT = {
+    low: `Google has no context for "${_name}" professionally. The signals it needs — content, a personal domain, social authority — are missing.`,
+    mid: `You rank, but don't dominate. Without a personal domain or regular content, you'll never fully own your search result.`,
+    high: `You're ranking, but not for the right terms. Long-form content and cross-platform consistency will push you into the top 3.`
+  };
+  bodyText(seoT[_band]);
+  bullet(`Register ${slug}.in — a personal domain is the strongest signal to Google that you own your name.`);
+  bullet('Publish 1 long-form LinkedIn post per week. Google indexes LinkedIn within 24 hours.');
+  bullet('Set up Google Alerts for your name at alerts.google.com');
+  calloutBox(`30-Day Ranking Move: One 800-word LinkedIn post per week with your target keywords will place you on Google Page 1 within 30 days.`, [42, 157, 143]);
+  y += 4;
+
+  // Section E
+  section('Step-by-Step Action Plan', 'E');
+  const actionItems = [
+    ['Day 1 – Fix the Foundations', ['Rewrite LinkedIn headline', 'Rewrite LinkedIn About section', 'Update profile photo']],
+    ['Day 2 – Claim Your Territory', [`Register ${slug}.in`, 'Set up one-page personal site', 'Unify usernames across platforms']],
+    ['Day 3 – Build the Signal', ['Write first LinkedIn post (300+ words)', 'Ask 3 colleagues for skill endorsements', 'Turn on LinkedIn Creator Mode']],
+    ['Week 1 – Build Momentum', ['Post on LinkedIn 3× this week', 'Comment on 5 relevant posts daily', 'Set up Google Alerts for your name']],
+  ];
+  actionItems.forEach(([dayTitle, tasks]) => {
+    subHead(dayTitle);
+    tasks.forEach(t => bullet(t));
+    y += 2;
+  });
+
+  // Section F
+  section('Hidden Opportunities', 'F');
+  bullet(`Register ${slug}.in — own your name before someone else does.`);
+  bullet('Post 1 insight per week on LinkedIn. 12 posts = 12 indexed content pieces in 3 months.');
+  bullet('Submit quotes via HARO (helpareporter.com) to get mentioned in articles.');
+  bullet('Add your name to relevant directories: AngelList, Wellfound, Toptal (for freelancers).');
+  calloutBox(`90-Day Projection: Consistent execution of this plan can realistically move your score from ${_score} to 72-80/100. That's the range where inbound opportunities begin.`, [59, 130, 246]);
+
+  // Footer on all pages
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFillColor(248, 248, 246);
+    doc.rect(0, 285, W, 12, 'F');
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(7);
+    doc.setTextColor(150,150,150);
+    doc.text(`SearchMe Reputation Report · ${_name} · Confidential`, margin, 291);
+    doc.text(`Page ${i} of ${pageCount}`, W - margin - 15, 291);
+  }
+
+  const fileName = `SearchMe_Report_${_name.replace(/\s+/g,'_')}.pdf`;
+  doc.save(fileName);
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && document.getElementById('hero').style.display !== 'none') checkScore();
+});
+</script>
+</body>
+</html>
