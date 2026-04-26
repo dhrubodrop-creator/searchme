@@ -9,86 +9,132 @@ load_dotenv()
 
 app = FastAPI()
 
+# ENV
 SERP_API_KEY = os.getenv("SERPAPI_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
+print("SERP:", "OK" if SERP_API_KEY else "MISSING")
+print("GROQ:", "OK" if GROQ_API_KEY else "MISSING")
+
 client = Groq(api_key=GROQ_API_KEY)
+
 
 class Input(BaseModel):
     name: str
     context: str = ""
 
+
+# ---------------- GOOGLE SEARCH ----------------
 def get_google_results(name, context):
-    query = f"{name} {context}".strip()
-    url = "https://serpapi.com/search"
-    params = {"engine": "google", "q": query, "api_key": SERP_API_KEY}
-    data = requests.get(url, params=params).json()
+    try:
+        query = f"{name} {context}".strip()
+        url = "https://serpapi.com/search"
+        params = {
+            "engine": "google",
+            "q": query,
+            "api_key": SERP_API_KEY
+        }
 
-    return [{
-        "title": i.get("title",""),
-        "link": i.get("link","")
-    } for i in data.get("organic_results", [])[:6]]
+        res = requests.get(url, params=params, timeout=10)
+        data = res.json()
 
-def analyze_results(results, context):
+        results = data.get("organic_results", [])
+
+        return [{
+            "title": i.get("title", ""),
+            "link": i.get("link", "")
+        } for i in results[:6]]
+
+    except Exception as e:
+        print("SERP ERROR:", e)
+        return []
+
+
+# ---------------- ANALYSIS ----------------
+def analyze_results(results):
     links = [r["link"] for r in results]
     domains = " ".join(links)
 
     platforms = {
-        "LinkedIn": 20 if "linkedin.com" in domains else 0,
-        "GitHub": 15 if "github.com" in domains else 0,
-        "Twitter/X": 10 if ("twitter.com" in domains or "x.com" in domains) else 0,
-        "Instagram": 10 if "instagram.com" in domains else 0,
-        "YouTube": 10 if "youtube.com" in domains else 0,
+        "LinkedIn": 1 if "linkedin.com" in domains else 0,
+        "GitHub": 1 if "github.com" in domains else 0,
+        "Twitter/X": 1 if ("twitter.com" in domains or "x.com" in domains) else 0,
+        "Instagram": 1 if "instagram.com" in domains else 0,
+        "YouTube": 1 if "youtube.com" in domains else 0,
     }
 
-    score = sum(platforms.values())
-    score = min(score, 100)
+    results_count = len(results)
+
+    # GOOGLE SCORE
+    google_score = 0
+    google_score += 30 if platforms["LinkedIn"] else 0
+    google_score += 15 if platforms["GitHub"] else 0
+    google_score += 10 if platforms["Twitter/X"] else 0
+    google_score += 10 if platforms["Instagram"] else 0
+    google_score += 10 if platforms["YouTube"] else 0
+    google_score += min(results_count * 5, 25)
+
+    google_score = min(google_score, 100)
+
+    # LAYOFF RISK
+    layoff_risk = 100 - google_score
+
+    if not platforms["LinkedIn"]:
+        layoff_risk += 15
+
+    if results_count < 3:
+        layoff_risk += 10
+
+    layoff_risk = min(layoff_risk, 100)
 
     risks = []
-    if platforms["LinkedIn"] == 0:
-        risks.append("No LinkedIn → low professional trust")
+    if not platforms["LinkedIn"]:
+        risks.append("No LinkedIn presence")
+    if results_count < 3:
+        risks.append("Low Google visibility")
 
-    if score < 40:
-        verdict = "Invisible online"
-    elif score < 60:
-        verdict = "Weak presence"
-    elif score < 80:
-        verdict = "Average presence"
-    else:
-        verdict = "Strong presence"
+    return google_score, layoff_risk, risks, platforms
 
-    return score, risks, verdict, platforms
 
-def ai_analysis(name, score, risks, platforms):
+# ---------------- AI ----------------
+def ai_analysis(name, google_score, layoff_risk, risks, platforms):
     prompt = f"""
-You are a professional career branding analyst.
-
-Analyze this person's online presence based on data below.
+You are a blunt career risk analyst.
 
 Name: {name}
-Score: {score}/100
-Platforms: {platforms}
+Google Score: {google_score}
+Layoff Risk: {layoff_risk}
+Signals: {platforms}
 Risks: {risks}
 
-Respond ONLY with:
-1. What impression this creates
-2. Why it is weak or strong
-3. 2 specific improvements
+Output:
 
-Keep it professional, direct, and safe.
-Do NOT mention anything about illegal activity or refusal.
+1. One-line verdict
+2. 3 reasons they are at risk
+3. 2 ways others are ahead
+4. 2 actions to reduce risk
+
+Tone:
+- direct
+- slightly uncomfortable
+- no fluff
 """
 
     try:
         res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama-3.1-70b-versatile",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=150
+            max_tokens=200
         )
-        return res.choices[0].message.content
-    except Exception as e:
-        return f"AI ERROR: {str(e)}"
 
+        return res.choices[0].message.content
+
+    except Exception as e:
+        print("GROQ ERROR:", e)
+        return "AI unavailable"
+
+
+# ---------------- FRONTEND ----------------
 @app.get("/", response_class=HTMLResponse)
 def home():
     return """
@@ -115,13 +161,9 @@ def home():
 
             let d = await res.json();
 
-            let platformHTML = Object.entries(d.platforms)
-                .map(([k,v]) => `<li>${k}: ${v}</li>`).join("");
-
             document.getElementById("out").innerHTML =
-            `<h2>${d.score}/100</h2>
-             <p>${d.verdict}</p>
-             <ul>${platformHTML}</ul>
+            `<h2>Google Score: ${d.google_score}</h2>
+             <h2>Layoff Risk: ${d.layoff_risk}</h2>
              <p>${d.ai}</p>`;
         }
         </script>
@@ -129,15 +171,19 @@ def home():
     </html>
     """
 
+
+# ---------------- API ----------------
 @app.post("/analyze")
 def analyze(data: Input):
     results = get_google_results(data.name, data.context)
-    score, risks, verdict, platforms = analyze_results(results, data.context)
-    ai = ai_analysis(data.name, score, risks, platforms)
+
+    google_score, layoff_risk, risks, platforms = analyze_results(results)
+
+    ai = ai_analysis(data.name, google_score, layoff_risk, risks, platforms)
 
     return {
-        "score": score,
-        "verdict": verdict,
+        "google_score": google_score,
+        "layoff_risk": layoff_risk,
         "risks": risks,
         "platforms": platforms,
         "ai": ai
