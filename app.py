@@ -9,7 +9,7 @@ load_dotenv(".env", override=True)
 
 app = FastAPI(title="Google Me Score")
 
-# ================== MANDATORY: CORS FOR FRONTEND INTEGRATION ==================
+# Fixes the connection between browser and Render
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,7 +26,6 @@ class Input(BaseModel):
     name: str
     context: str = ""
 
-# ================== GOOGLE SEARCH (SERPAPI) ==================
 def get_google_results(name: str, context: str):
     try:
         query = f"{name} {context}".strip()
@@ -37,7 +36,6 @@ def get_google_results(name: str, context: str):
         )
         data = res.json()
         if "error" in data:
-            print("SERP ERROR:", data["error"])
             return []
         results = data.get("organic_results", [])
         return [{
@@ -46,143 +44,41 @@ def get_google_results(name: str, context: str):
             "snippet": item.get("snippet", "")
         } for item in results[:12]]
     except Exception as e:
-        print("SERP FAIL:", e)
         return []
 
-# ================== DEEP AI ANALYSIS (REAL SCORE) ==================
 def deep_ai_analysis(name, results):
     if not results:
-        return 20, "You are a digital ghost. Google has zero professional record of your existence."
+        return 20, "No digital footprint found. You are invisible to Google."
 
     search_summary = "\n".join([
         f"{i+1}. {r['title']} | {r['link']}\n   {r['snippet'][:250]}..."
         for i, r in enumerate(results[:10])
     ])
 
-    prompt = f"""
-You are a brutally honest career reputation analyst.
-Name: {name}
-
-SEARCH RESULTS:
-{search_summary}
-
-Return ONLY valid JSON in this exact format:
-{{
-  "google_score": <number between 0 and 100>,
-  "verdict": "<short, sharp, brutally honest verdict - 2 to 4 lines max>"
-}}
-Be realistic and critical. If results belong to someone else with the same name, the score should be low.
-"""
+    prompt = f"Name: {name}\nResults:\n{search_summary}\n\nReturn ONLY JSON: {{\"google_score\": <0-100>, \"verdict\": \"<brutal honesty>\"}}"
 
     try:
         res = client.chat.completions.create(
             model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=600,
-            temperature=0.7,
             response_format={"type": "json_object"}
         )
-        content = res.choices[0].message.content.strip()
-        data = json.loads(content)
-        
-        score = int(data.get("google_score", 50))
-        verdict = data.get("verdict", "Analysis unavailable.")
-        return score, verdict
-    except Exception as e:
-        print("Deep AI Error:", e)
-        return 50, "Deep analysis temporarily unavailable."
+        data = json.loads(res.choices[0].message.content)
+        return int(data.get("google_score", 50)), data.get("verdict", "No verdict.")
+    except:
+        return 50, "AI Analysis failed."
 
-# ================== MAIN ENDPOINT ==================
 @app.post("/analyze")
 async def analyze(data: Input):
-    # 1. Real-time Google Search
     results = get_google_results(data.name, data.context)
-    
-    # 2. Llama 3.1 Reputation Deep-Dive
-    google_score, ai_verdict = deep_ai_analysis(data.name, results)
-    
-    # 3. Domain extraction for Platform Detection
+    score, verdict = deep_ai_analysis(data.name, results)
     domains = [r["link"] for r in results if r.get("link")]
-
     return {
-        "google_score": google_score,
-        "layoff_risk": 100 - google_score,
-        "ai": ai_verdict,
+        "google_score": score,
+        "ai": verdict,
         "domains": domains
     }
 
 @app.get("/")
 def home():
-    return {"status": "online", "engine": "Llama 3.1-8b-instant", "search": "SerpApi"}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)            "snippet": item.get("snippet", "")
-        } for item in results[:12]]
-    except Exception as e:
-        print("SERP FAIL:", e)
-        return []
-
-# ================== DEEP AI ANALYSIS (REAL SCORE) ==================
-def deep_ai_analysis(name, results):
-    search_summary = "\n".join([
-        f"{i+1}. {r['title']} | {r['link']}\n   {r['snippet'][:250]}..."
-        for i, r in enumerate(results[:10])
-    ])
-
-    prompt = f"""
-You are a brutally honest career reputation analyst.
-Name: {name}
-
-SEARCH RESULTS:
-{search_summary}
-
-Return ONLY valid JSON in this exact format:
-{{
-  "google_score": <number between 0 and 100>,
-  "verdict": "<short, sharp, brutally honest verdict - 2 to 4 lines max>"
-}}
-Be realistic and critical based on the actual search results.
-"""
-
-    try:
-        res = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=600,
-            temperature=0.7
-        )
-        content = res.choices[0].message.content.strip()
-
-        # Extract JSON
-        json_match = re.search(r'\{.*\}', content, re.DOTALL)
-        if json_match:
-            data = json.loads(json_match.group())
-            score = int(data.get("google_score", 50))
-            verdict = data.get("verdict", "Analysis unavailable.")
-            return score, verdict
-    except Exception as e:
-        print("Deep AI Error:", e)
-
-    return 50, "Deep analysis temporarily unavailable."
-
-# ================== MAIN ENDPOINT ==================
-@app.post("/analyze")
-def analyze(data: Input):
-    results = get_google_results(data.name, data.context)
-    google_score, ai_verdict = deep_ai_analysis(data.name, results)
-    
-    domains = [r["link"] for r in results if r.get("link")]
-
-    return {
-        "google_score": google_score,
-        "layoff_risk": 100 - google_score,
-        "ai": ai_verdict,
-        "domains": domains
-    }
-
-@app.get("/")
-def home():
-    return "<h1>✅ Backend is Running - Deep AI Active</h1>"
-
-print("🚀 Google Me Score Backend Ready!")
+    return {"status": "online"}
