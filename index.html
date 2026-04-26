@@ -1034,6 +1034,21 @@
 const API_PATH = "/analyze";
 let _name = "", _prof = "", _score = 0, _data = null;
 
+// Auto-unlock if redirected back from Razorpay
+window.addEventListener('DOMContentLoaded', () => {
+  if (new URLSearchParams(window.location.search).get('payment') === 'success') {
+    const saved = sessionStorage.getItem('gmsPendingData');
+    if (saved) {
+      _data = JSON.parse(saved);
+      _name = _data._name || ''; _prof = _data._prof || '';
+      _score = parseInt(_data.google_score) || 42;
+      document.getElementById('heroSection').style.display = 'none';
+      renderResults();
+      setTimeout(unlockReport, 800);
+    }
+  }
+});
+
 // ── LOADER ANIMATION ──
 let stepTimeout;
 function animateLoader() {
@@ -1325,7 +1340,9 @@ function renderPremiumContent() {
 
 // ── PAYMENT ──
 function handlePayment() {
-  window.open('https://rzp.io/rzp/PUNs9XqO', '_blank');
+  // Save current state so we can restore after redirect
+  if (_data) { sessionStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof})); }
+  window.open('https://rzp.io/rzp/G7JGvoDI', '_blank');
   setTimeout(() => {
     const btn = document.getElementById('ipaidBtn');
     btn.style.display = 'inline-flex';
