@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    /* [STRICTLY ORIGINAL UI/UX - NO CHANGES TO CSS] */
+    /* [STRICTLY ORIGINAL UI/UX] */
     :root { --bg: #f7f7f5; --white: #ffffff; --text: #0f0f0f; --muted: #6b6b6b; --border: #e4e4e0; --red: #e63946; --red-light: #fde8ea; --yellow: #f4a261; --yellow-light: #fef3e8; --green: #2a9d8f; --green-light: #e6f5f3; --accent: #1a1a2e; --accent2: #e63946; --blue: #3b82f6; --blue-light: #eff6ff; --purple: #7c3aed; --purple-light: #f5f3ff; --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04); --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04); --shadow-lg: 0 12px 48px rgba(0,0,0,0.12); --radius: 16px; --radius-sm: 10px; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
@@ -83,9 +83,6 @@
     .diag-score-bar { background: var(--bg); border-radius: 100px; height: 10px; overflow: hidden; margin: 12px 0 6px; }
     .diag-score-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
     .callout { border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; font-size: 0.88rem; line-height: 1.5; }
-    .tip-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 10px; }
-    .keyword-tag { background: var(--blue-light); color: var(--blue); font-size: 0.8rem; font-weight: 600; padding: 5px 12px; border-radius: 100px; border: 1px solid #bfdbfe; }
-    .domain-box { background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%); border: 1.5px solid #c7d7fd; border-radius: var(--radius-sm); padding: 16px 20px; margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
     .download-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: var(--text); color: white; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; border: none; border-radius: var(--radius-sm); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
 </style>
 </head>
@@ -99,12 +96,12 @@
 <div class="loading-overlay" id="loading">
     <div class="loading-spinner"></div>
     <div class="loading-text" id="loading-name">Scanning your presence...</div>
-    <div class="loading-sub">Checking 5 platforms in real time</div>
+    <div class="loading-sub">Checking real-time search data</div>
     <div class="loading-steps">
-        <div class="loading-step" id="step1">Scanning Google Search results</div>
-        <div class="loading-step" id="step2">Checking LinkedIn visibility</div>
-        <div class="loading-step" id="step3">Analyzing social footprint</div>
-        <div class="loading-step" id="step4">Calculating reputation score</div>
+        <div class="loading-step" id="step1">Retrieving Google Search results</div>
+        <div class="loading-step" id="step2">Analyzing SERP snippets</div>
+        <div class="loading-step" id="step3">Running Llama 3.1 analysis</div>
+        <div class="loading-step" id="step4">Finalizing reputation score</div>
     </div>
 </div>
 
@@ -131,20 +128,20 @@
         <div class="score-ring">
             <svg viewBox="0 0 160 160" width="160" height="160">
                 <circle class="ring-bg" cx="80" cy="80" r="70" />
-                <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="70" stroke-dasharray="439.8" stroke-dashoffset="439.8" />
+                <circle id="ringFill" class="ring-fill" cx="80" cy="80" r="70" stroke-dasharray="439.82" stroke-dashoffset="439.82" />
             </svg>
             <div class="score-num"><span id="scoreNum">0</span><span class="score-denom">/100</span></div>
         </div>
         <div class="score-label" id="scoreLabel">Analyzing...</div>
-        <div class="score-brutal" id="scoreBrutal"><strong>Wait. We are calculating your first impression.</strong></div>
+        <div class="score-brutal" id="scoreBrutal"><strong>Calculating your real-time footprint...</strong></div>
     </div>
 
     <p class="section-title">Platform Breakdown</p>
     <div class="platform-grid" id="platformGrid"></div>
 
     <div class="insight-block">
-        <div class="insight-tag">Reputation Insight</div>
-        <div class="insight-text" id="insightText">"Waiting for AI analysis..."</div>
+        <div class="insight-tag">AI Reputation Verdict</div>
+        <div class="insight-text" id="insightText">"Analyzing search results..."</div>
     </div>
 
     <div class="locked-section" id="lockedSection">
@@ -160,7 +157,7 @@
         <div class="report-header">
             <div class="report-badge">✦ Premium Report · Unlocked</div>
             <div class="report-title-main">Reputation Report for <span id="rptName">You</span></div>
-            <div id="rptScore" class="report-score-num" style="font-size: 3rem;">0</div>
+            <div id="rptScoreDisplay" class="report-score-num" style="font-size: 3rem; color: #fff;">0</div>
         </div>
 
         <div class="report-section">
@@ -168,7 +165,7 @@
             <div class="report-section-body">
                 <p id="diagText"></p>
                 <div class="diag-score-bar"><div class="diag-score-fill" id="diagBar"></div></div>
-                <div class="callout red"><strong>Action Required:</strong> Get your domain <a id="godaddy-link" href="#" target="_blank" style="color:var(--blue)">on GoDaddy</a>.</div>
+                <div class="callout red"><strong>Action Required:</strong> Check domain availability for <a id="godaddy-link" href="#" target="_blank" style="color:var(--blue); text-decoration: underline;">your name</a>.</div>
             </div>
         </div>
         
@@ -177,12 +174,11 @@
 </div>
 
 <script>
-// CHANGE THIS TO YOUR EXACT RENDER URL
 const BACKEND_URL = "https://searchme-cv72.onrender.com/analyze";
 let globalData = null;
 
 async function checkScore() {
-    console.log("🚀 Analysis Initiated...");
+    console.log("🚀 Requesting analysis from Render...");
     const name = document.getElementById('nameInput').value.trim();
     const context = document.getElementById('profInput').value.trim();
     
@@ -191,36 +187,35 @@ async function checkScore() {
         return;
     }
 
-    // UI Loading state
+    // UI State: Loading
     document.getElementById('loading').classList.add('active');
     document.getElementById('step1').classList.add('done');
 
     try {
-        console.log(`📡 Fetching from: ${BACKEND_URL}`);
         const response = await fetch(BACKEND_URL, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ name, context })
         });
 
-        if (!response.ok) throw new Error(`Server Error: ${response.status}`);
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
         document.getElementById('step2').classList.add('done');
         globalData = await response.json();
-        console.log("✅ DATA RECEIVED:", globalData);
         
+        console.log("✅ Success! Backend returned:", globalData);
+
         document.getElementById('step3').classList.add('done');
         document.getElementById('step4').classList.add('done');
 
-        // Transition to results
         setTimeout(() => {
             document.getElementById('loading').classList.remove('active');
             displayResults(name);
-        }, 1000);
+        }, 800);
 
     } catch (err) {
-        console.error("❌ FETCH ERROR:", err);
-        alert("Connection failed. Ensure the Render backend is live and CORS is enabled.");
+        console.error("❌ Connection failed:", err);
+        alert("Connection failed. Check if Render backend is 'Live' and CORS is enabled.");
         document.getElementById('loading').classList.remove('active');
     }
 }
@@ -230,16 +225,14 @@ function displayResults(name) {
     document.getElementById('results').classList.add('visible');
     document.getElementById('scoreName').innerText = name.toUpperCase();
     
-    // Animate Real Score
+    // Core Score & AI Verdict (Backend keys: 'google_score' and 'ai')
     animateScore(globalData.google_score);
-    
-    // AI Verdict
     document.getElementById('insightText').innerText = `"${globalData.ai}"`;
     
-    // Platform detection (scan links)
-    renderPlatforms(globalData.domains);
+    // Detect platforms from 'domains' array
+    renderPlatforms(globalData.domains || []);
 
-    // Links
+    // Prep GoDaddy link
     const slug = name.toLowerCase().replace(/\s+/g, '');
     document.getElementById('godaddy-link').href = `https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=${slug}.com`;
 }
@@ -247,7 +240,7 @@ function displayResults(name) {
 function animateScore(target) {
     const el = document.getElementById('scoreNum');
     const ring = document.getElementById('ringFill');
-    const circumference = 439.8;
+    const circumference = 439.82;
     let cur = 0;
     const interval = setInterval(() => {
         if(cur >= target) {
@@ -255,22 +248,33 @@ function animateScore(target) {
             updateLabels(target);
         }
         el.innerText = cur;
-        ring.style.strokeDashoffset = circumference - (circumference * cur / 100);
+        const offset = circumference - (circumference * cur / 100);
+        ring.style.strokeDashoffset = offset;
         cur++;
     }, 15);
 }
 
 function updateLabels(s) {
     const label = document.getElementById('scoreLabel');
-    if(s > 70) { label.innerText = "Strong Presence"; label.style.color = "var(--green)"; }
-    else if(s > 40) { label.innerText = "Average Presence"; label.style.color = "var(--yellow)"; }
-    else { label.innerText = "Weak Presence"; label.style.color = "var(--red)"; }
+    const brutal = document.getElementById('scoreBrutal');
+    const card = document.getElementById('scoreCard');
+    
+    if(s > 70) { 
+        label.innerText = "Strong Presence"; label.style.color = "var(--green)";
+        brutal.innerHTML = "<strong>You own your search results.</strong> Keep building authority.";
+    } else if(s > 40) { 
+        label.innerText = "Average Presence"; label.style.color = "var(--yellow)";
+        brutal.innerHTML = "<strong>You're findable but forgettable.</strong> Optimize your profiles.";
+    } else { 
+        label.innerText = "Weak Presence"; label.style.color = "var(--red)";
+        brutal.innerHTML = "<strong>You're invisible where it matters.</strong> Recruiters can't find you.";
+    }
 }
 
 function renderPlatforms(links) {
     const grid = document.getElementById('platformGrid');
     grid.innerHTML = '';
-    const sites = {
+    const detection = {
         'linkedin.com': 'LinkedIn',
         'github.com': 'GitHub',
         'instagram.com': 'Instagram',
@@ -278,11 +282,16 @@ function renderPlatforms(links) {
         'medium.com': 'Medium'
     };
     
-    Object.keys(sites).forEach(domain => {
-        const found = links.some(l => l.includes(domain));
+    Object.keys(detection).forEach(domain => {
+        const isFound = links.some(l => l.toLowerCase().includes(domain));
         const card = document.createElement('div');
         card.className = 'platform-card';
-        card.innerHTML = `<div class="p-info"><div class="p-name">${sites[domain]}</div><div class="p-status ${found ? 'present' : 'missing'}">${found ? '● Present' : '○ Missing'}</div></div>`;
+        card.innerHTML = `
+            <div class="p-info">
+                <div class="p-name">${detection[domain]}</div>
+                <div class="p-status ${isFound ? 'present' : 'missing'}">${isFound ? '● Present' : '○ Missing'}</div>
+            </div>
+        `;
         grid.appendChild(card);
     });
 }
@@ -296,21 +305,27 @@ function unlockReport() {
     document.getElementById('lockedSection').style.display = 'none';
     const report = document.getElementById('premiumReport');
     report.classList.add('revealed');
-    document.getElementById('rptName').innerText = document.getElementById('nameInput').value;
-    document.getElementById('rptScore').innerText = globalData.google_score;
-    document.getElementById('diagBar').style.width = globalData.google_score + '%';
-    document.getElementById('diagBar').style.backgroundColor = globalData.google_score < 40 ? '#e63946' : '#2a9d8f';
+    
+    const name = document.getElementById('nameInput').value;
+    document.getElementById('rptName').innerText = name;
+    document.getElementById('rptScoreDisplay').innerText = globalData.google_score;
+    document.getElementById('diagText').innerText = `A real-time search for "${name}" reveals a score of ${globalData.google_score}/100. This assessment is based on asset density and professional keyword alignment.`;
+    
+    const bar = document.getElementById('diagBar');
+    bar.style.width = globalData.google_score + '%';
+    bar.style.backgroundColor = globalData.google_score < 40 ? '#e63946' : '#2a9d8f';
 }
 
 function downloadPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
     const name = document.getElementById('nameInput').value;
-    doc.text(`Digital Reputation Audit: ${name}`, 20, 20);
-    doc.text(`Score: ${globalData.google_score}/100`, 20, 30);
-    doc.text(`AI Analysis:`, 20, 45);
-    doc.text(doc.splitTextToSize(globalData.ai, 170), 20, 55);
-    doc.save(`SearchMe_${name.replace(/\s/g,'_')}.pdf`);
+    doc.setFontSize(22); doc.text(`SearchMe Reputation Audit: ${name}`, 20, 20);
+    doc.setFontSize(16); doc.text(`Google Score: ${globalData.google_score}/100`, 20, 35);
+    doc.setFontSize(12); doc.text("AI Reputation Analysis:", 20, 50);
+    const splitText = doc.splitTextToSize(globalData.ai, 170);
+    doc.text(splitText, 20, 60);
+    doc.save(`SearchMe_Audit_${name.replace(/\s/g,'_')}.pdf`);
 }
 </script>
 </body>
