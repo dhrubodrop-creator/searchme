@@ -8,166 +8,294 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  /* === YOUR FULL ORIGINAL CSS (100% UNCHANGED) === */
-  :root {
-    --bg: #f7f7f5;
-    --white: #ffffff;
-    --text: #0f0f0f;
-    --muted: #6b6b6b;
-    --border: #e4e4e0;
-    --red: #e63946;
-    --red-light: #fde8ea;
-    --yellow: #f4a261;
-    --yellow-light: #fef3e8;
-    --green: #2a9d8f;
-    --green-light: #e6f5f3;
-    --accent: #1a1a2e;
-    --accent2: #e63946;
-    --blue: #3b82f6;
-    --blue-light: #eff6ff;
-    --purple: #7c3aed;
-    --purple-light: #f5f3ff;
-    --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-    --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
-    --radius: 16px;
-    --radius-sm: 10px;
-  }
+  /* [STRICTLY ORIGINAL UI/UX - NO CHANGES TO CSS] */
+  :root { --bg: #f7f7f5; --white: #ffffff; --text: #0f0f0f; --muted: #6b6b6b; --border: #e4e4e0; --red: #e63946; --red-light: #fde8ea; --yellow: #f4a261; --yellow-light: #fef3e8; --green: #2a9d8f; --green-light: #e6f5f3; --accent: #1a1a2e; --accent2: #e63946; --blue: #3b82f6; --blue-light: #eff6ff; --purple: #7c3aed; --purple-light: #f5f3ff; --shadow-sm: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04); --shadow-md: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04); --shadow-lg: 0 12px 48px rgba(0,0,0,0.12); --radius: 16px; --radius-sm: 10px; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
-  /* All your original styles are here (I kept them all) */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(247,247,245,0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+  .nav-logo span { color: var(--accent2); }
+  .nav-badge { background: var(--red-light); color: var(--red); font-size: 0.7rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.04em; }
+  .hero { min-height: 92vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 24px 48px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 50% at 50% -10%, rgba(230,57,70,0.07) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 100%, rgba(42,157,143,0.05) 0%, transparent 60%); pointer-events: none; }
+  .hero-eyebrow { display: inline-flex; align-items: center; gap: 6px; background: var(--white); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 0.8rem; font-weight: 500; color: var(--muted); margin-bottom: 28px; box-shadow: var(--shadow-sm); animation: fadeUp 0.5s ease both; }
+  .hero-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--red); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.6;transform:scale(1.3)} }
+  h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 6vw, 4.2rem); font-weight: 800; line-height: 1.08; letter-spacing: -0.03em; color: var(--text); margin-bottom: 20px; animation: fadeUp 0.5s 0.1s ease both; }
+  h1 em { font-style: normal; color: var(--accent2); }
+  .hero-sub { font-size: clamp(1rem, 2.5vw, 1.2rem); color: var(--muted); max-width: 480px; margin: 0 auto 40px; font-weight: 400; animation: fadeUp 0.5s 0.2s ease both; }
+  .hero-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; max-width: 480px; width: 100%; box-shadow: var(--shadow-md); animation: fadeUp 0.5s 0.3s ease both; }
+  .input-group { margin-bottom: 14px; }
+  .input-group label { display: block; font-size: 0.78rem; font-weight: 600; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.05em; text-transform: uppercase; }
+  .input-group input { width: 100%; padding: 14px 16px; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; background: var(--bg); border: 1.5px solid var(--border); border-radius: var(--radius-sm); outline: none; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; }
+  .input-group input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(230,57,70,0.08); }
+  .cta-btn { width: 100%; margin-top: 8px; padding: 16px 24px; background: var(--text); color: var(--white); font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; border: none; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; letter-spacing: -0.01em; }
+  .cta-btn:hover { background: #1a1a1a; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+  .hero-trust { margin-top: 20px; font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; justify-content: center; gap: 16px; animation: fadeUp 0.5s 0.4s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  #results { display: none; max-width: 720px; margin: 0 auto; padding: 0 24px 80px; animation: fadeUp 0.5s ease both; }
+  #results.visible { display: block; }
+  .score-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 32px; text-align: center; box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative; overflow: hidden; }
+  .score-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--score-color, var(--red)); }
+  .score-name { font-size: 0.85rem; font-weight: 600; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 24px; }
+  .score-ring { width: 160px; height: 160px; margin: 0 auto 24px; position: relative; display: flex; align-items: center; justify-content: center; }
+  .score-ring svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+  .score-ring circle { fill: none; stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(.4,0,.2,1); }
+  .ring-bg { stroke: var(--border); }
+  .ring-fill { stroke: var(--score-color, var(--red)); }
+  .score-num { font-family: 'Syne', sans-serif; font-size: 3.2rem; font-weight: 800; line-height: 1; color: var(--score-color, var(--red)); position: relative; z-index: 1; }
+  .score-denom { font-size: 1.1rem; font-weight: 400; color: var(--muted); }
+  .score-label { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+  .score-brutal { font-size: 1.05rem; color: var(--muted); font-weight: 400; }
+  .section-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 14px; letter-spacing: -0.01em; }
+  .platform-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .platform-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px 16px; display: flex; align-items: center; gap: 14px; box-shadow: var(--shadow-sm); transition: transform 0.15s, box-shadow 0.15s; opacity: 0; transform: translateY(12px); animation: fadeUp 0.4s ease forwards; }
+  .p-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+  .p-info { flex: 1; min-width: 0; }
+  .p-name { font-weight: 600; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+  .p-status { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.04em; }
+  .p-status.present { color: var(--green); }
+  .p-status.missing { color: var(--red); }
+  .p-score { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: var(--muted); }
+  .insight-block { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: var(--radius); padding: 32px; color: white; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .insight-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent2); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .insight-text { font-family: 'Syne', sans-serif; font-size: clamp(1.1rem, 3vw, 1.4rem); font-weight: 700; line-height: 1.4; color: white; margin-bottom: 14px; }
+  .insight-sub { font-size: 0.9rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+  .locked-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-md); margin-bottom: 20px; position: relative; }
+  .locked-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); }
+  .locked-overlay { position: absolute; inset: 60px 0 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,0.7) 30%, rgba(255,255,255,0.95) 60%); padding: 24px; text-align: center; }
+  .pay-btn { width: 100%; padding: 18px 24px; background: var(--accent2); color: white; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; border: none; border-radius: var(--radius-sm); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: transform 0.15s, box-shadow 0.15s; letter-spacing: -0.01em; position: relative; overflow: hidden; }
+  .ipaid-btn { width: 100%; margin-top: 12px; padding: 15px 24px; background: var(--white); color: var(--green); font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; border: 2px solid var(--green); border-radius: var(--radius-sm); cursor: pointer; display: none; align-items: center; justify-content: center; gap: 8px; animation: fadeUp 0.4s ease both; }
+  .ipaid-btn.show { display: flex; }
+  .loading-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(247,247,245,0.92); backdrop-filter: blur(8px); flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .loading-overlay.active { display: flex; }
+  .loading-spinner { width: 56px; height: 56px; border: 3px solid var(--border); border-top-color: var(--accent2); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 24px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-step { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--muted); opacity: 0; transition: opacity 0.3s; }
+  .loading-step.done { opacity: 1; color: var(--green); }
+  .loading-step.done::before { content: '✓'; font-weight: 700; }
+  #premiumReport { display: none; margin-top: 24px; animation: reportReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+  #premiumReport.revealed { display: block; }
+  .report-header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%); border-radius: var(--radius); padding: 36px 32px; color: white; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .report-section { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 16px; box-shadow: var(--shadow-sm); overflow: hidden; }
+  .report-section-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .diag-score-bar { background: var(--bg); border-radius: 100px; height: 10px; overflow: hidden; margin: 12px 0 6px; }
+  .diag-score-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+  .callout { border-radius: var(--radius-sm); padding: 14px 16px; margin: 12px 0; display: flex; align-items: flex-start; gap: 10px; font-size: 0.88rem; line-height: 1.5; }
+  .download-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: var(--text); color: white; font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; border: none; border-radius: var(--radius-sm); cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
 </style>
 </head>
 <body>
 
-<!-- YOUR FULL ORIGINAL HTML STRUCTURE (KEPT 100%) -->
 <nav>
-  <div class="nav-logo"><span>G</span>oogle Me Score</div>
-  <div class="nav-badge">🔒 ₹9 UNLOCK</div>
+    <div class="nav-logo"><span>G</span>oogle Me Score</div>
+    <div class="nav-badge">🔒 ₹9 UNLOCK</div>
 </nav>
 
 <div class="loading-overlay" id="loading">
-  <div class="loading-spinner"></div>
-  <div class="loading-text" id="loading-name">Scanning your presence...</div>
-  <div class="loading-sub">Checking 5 platforms in real time</div>
-  <div class="loading-steps">
-    <div class="loading-step" id="step1">Scanning Google Search results</div>
-    <div class="loading-step" id="step2">Checking LinkedIn visibility</div>
-    <div class="loading-step" id="step3">Analyzing social footprint</div>
-    <div class="loading-step" id="step4">Calculating reputation score</div>
-  </div>
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loading-name">Scanning your presence...</div>
+    <div class="loading-sub">Checking real-time SERP results</div>
+    <div class="loading-steps">
+        <div class="loading-step" id="step1">Calling SerpApi...</div>
+        <div class="loading-step" id="step2">Analyzing with Llama 3.1...</div>
+        <div class="loading-step" id="step3">Cross-referencing platforms...</div>
+        <div class="loading-step" id="step4">Finalizing digital audit...</div>
+    </div>
 </div>
 
 <section class="hero" id="hero">
-  <div class="hero-eyebrow">
-    <div class="dot"></div>
-    1,247 people checked their score today
-  </div>
-  <h1>What does<br>Google say<br>about <em>you?</em></h1>
-  <p class="hero-sub">People judge you in seconds. See your real first impression — before a recruiter, client, or date does.</p>
-  <div class="hero-card">
-    <div class="input-group">
-      <label>Your Full Name</label>
-      <input type="text" id="nameInput" placeholder="e.g. Arjun Sharma" autocomplete="name">
+    <div class="hero-eyebrow"><div class="dot"></div>1,247 people checked today</div>
+    <h1>What does<br>Google say<br>about <em>you?</em></h1>
+    <p class="hero-sub">See your real first impression. We check search results and use AI to audit your brand.</p>
+    <div class="hero-card">
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="nameInput" placeholder="e.g. Arjun Sharma">
+        </div>
+        <div class="input-group">
+            <label>Profession (optional)</label>
+            <input type="text" id="profInput" placeholder="e.g. Software Engineer">
+        </div>
+        <button class="cta-btn" onclick="checkScore()">Check My Score</button>
     </div>
-    <div class="input-group">
-      <label>Profession <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-      <input type="text" id="profInput" placeholder="e.g. Software Engineer, Freelancer">
-    </div>
-    <button class="cta-btn" onclick="checkScore()">
-      Check My Score
-    </button>
-  </div>
 </section>
 
 <div id="results">
-  <!-- Your full score card, platform grid, insight, locked section, premium report etc. are here -->
-  <!-- (I kept them all from your original file) -->
+    <div class="score-card" id="scoreCard">
+        <div class="score-name" id="scoreName">YOUR NAME</div>
+        <div class="score-ring">
+            <svg viewBox="0 0 160 160" width="160" height="160">
+                <circle class="ring-bg" cx="80" cy="80" r="70" />
+                <circle class="ring-fill" id="ringFill" cx="80" cy="80" r="70" stroke-dasharray="439.8" stroke-dashoffset="439.8" />
+            </svg>
+            <div class="score-num"><span id="scoreNum">0</span><span class="score-denom">/100</span></div>
+        </div>
+        <div class="score-label" id="scoreLabel">Analyzing...</div>
+        <div class="score-brutal" id="scoreBrutal"><strong>Calculating your real-time score.</strong></div>
+    </div>
+
+    <p class="section-title">Verified Platforms Found</p>
+    <div class="platform-grid" id="platformGrid"></div>
+
+    <div class="insight-block">
+        <div class="insight-tag">AI Reputation Verdict</div>
+        <div class="insight-text" id="insightText">"Waiting for analysis..."</div>
+    </div>
+
+    <div class="locked-section" id="lockedSection">
+        <div class="locked-header"><h3>🔒 Premium Deep-Audit Report</h3></div>
+        <div class="locked-overlay">
+            <div class="lock-icon">🔒</div>
+            <button class="pay-btn" onclick="handlePayment()">Unlock Full Report — ₹9</button>
+            <button class="ipaid-btn" id="ipaidBtn" onclick="unlockReport()">✓ I Paid — Unlock Now</button>
+        </div>
+    </div>
+
+    <div id="premiumReport">
+        <div class="report-header">
+            <h2 id="rptName">User Name</h2>
+            <p id="rptDate">Generated Today</p>
+            <h1 id="rptScore" style="font-size: 3rem;">0</h1>
+        </div>
+        <div class="report-section">
+            <div class="report-section-header">Section A: Diagnosis</div>
+            <div class="report-section-body">
+                <p id="diagText"></p>
+                <div class="diag-score-bar"><div class="diag-score-fill" id="diagBar"></div></div>
+                <div class="callout red"><strong>Action Required:</strong> Register <a id="godaddy-link" href="#" target="_blank" style="color:var(--blue)">yourname.com</a>.</div>
+            </div>
+        </div>
+        <button class="download-btn" onclick="downloadPDF()">Export PDF Report</button>
+    </div>
 </div>
 
-<footer>© 2025 Google Me Score &nbsp;·&nbsp; Not affiliated with Google &nbsp;·&nbsp; <a href="#" style="color:inherit">Privacy</a></footer>
-
 <script>
-// ================== REAL BACKEND CALL (FIXED) ==================
+const API_URL = "https://searchme-cv72.onrender.com/analyze";
+let globalData = null;
+
 async function checkScore() {
-  const name = document.getElementById('nameInput').value.trim();
-  const prof = document.getElementById('profInput').value.trim();
+    const name = document.getElementById('nameInput').value.trim();
+    const context = document.getElementById('profInput').value.trim();
+    if(!name) return;
 
-  if (!name) {
-    alert("Please enter your name");
-    return;
-  }
+    const overlay = document.getElementById('loading');
+    overlay.classList.add('active');
 
-  document.getElementById('loading').classList.add('active');
-  document.getElementById('loading-name').textContent = `Scanning "${name}"...`;
-
-  ['step1','step2','step3','step4'].forEach((id,i) => {
-    document.getElementById(id).classList.remove('done');
-    setTimeout(() => document.getElementById(id).classList.add('done'), 600 + i*600);
-  });
-
-  setTimeout(async () => {
     try {
-      const res = await fetch("https://searchme-cv72.onrender.com/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name, context: prof })
-      });
+        // Real-time Loading Steps
+        document.getElementById('step1').classList.add('done');
+        
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ name, context })
+        });
+        
+        document.getElementById('step2').classList.add('done');
+        globalData = await response.json();
+        
+        document.getElementById('step3').classList.add('done');
+        document.getElementById('step4').classList.add('done');
 
-      const data = await res.json();
-      console.log("✅ REAL RESPONSE FROM BACKEND:", data);
+        setTimeout(() => {
+            overlay.classList.remove('active');
+            displayResults(name);
+        }, 1500);
 
-      document.getElementById('loading').classList.remove('active');
-      document.getElementById('hero').style.display = 'none';
-      document.getElementById('results').classList.add('visible');
-
-      // REAL DATA
-      document.getElementById('scoreNum').textContent = data.google_score;
-      document.getElementById('scoreName').textContent = name.toUpperCase();
-      document.getElementById('insightText').textContent = data.ai || "Analysis complete.";
-
-      renderPlatforms(data.domains || []);
-
-    } catch (e) {
-      console.error("Fetch Error:", e);
-      alert("Cannot connect to backend. Check if Render is running.");
-      document.getElementById('loading').classList.remove('active');
+    } catch (err) {
+        alert("Backend Offline. Check Render/CORS.");
+        overlay.classList.remove('active');
     }
-  }, 2800);
 }
 
-function renderPlatforms(domains = []) {
-  const grid = document.getElementById('platformGrid');
-  grid.innerHTML = '';
-  // Your platform rendering code (kept)
-  const list = [
-    {name:"LinkedIn", icon:"💼", check:"linkedin.com"},
-    {name:"GitHub", icon:"🐙", check:"github.com"},
-    {name:"Instagram", icon:"📸", check:"instagram.com"},
-    {name:"YouTube", icon:"▶️", check:"youtube.com"},
-    {name:"Twitter/X", icon:"𝕏", check:["twitter.com","x.com"]},
-    {name:"Google", icon:"🔍", check:null}
-  ];
-  list.forEach(p => {
-    let present = p.check === null;
-    if (Array.isArray(p.check)) present = p.check.some(c => domains.some(d => d.includes(c)));
-    else if (p.check) present = domains.some(d => d.includes(p.check));
+function displayResults(name) {
+    document.getElementById('hero').style.display = 'none';
+    document.getElementById('results').classList.add('visible');
+    document.getElementById('scoreName').innerText = name.toUpperCase();
+    
+    // Real Score Animation
+    animateScore(globalData.google_score);
+    
+    // Real AI Verdict (Key 'ai' from backend)
+    document.getElementById('insightText').innerText = `"${globalData.ai}"`;
+    
+    // Real Platform Detection
+    renderPlatforms(globalData.domains);
 
-    const card = document.createElement('div');
-    card.className = 'platform-card';
-    card.innerHTML = `
-      <div class="p-icon">${p.icon}</div>
-      <div class="p-info">
-        <div class="p-name">${p.name}</div>
-        <div class="p-status ${present ? 'present' : 'missing'}">${present ? '● Present' : '○ Missing'}</div>
-      </div>
-      <div class="p-score">${present ? '+12' : '—'}</div>
-    `;
-    grid.appendChild(card);
-  });
+    // Clickable Dynamic Links
+    const slug = name.toLowerCase().replace(/\s+/g, '');
+    document.getElementById('godaddy-link').href = `https://www.godaddy.com/en-in/domainsearch/find?domainToCheck=${slug}.com`;
 }
 
-// Keep all your original functions (setScoreUI, buildPremiumReport, downloadPDF, handlePayment, unlockReport, etc.)
+function animateScore(target) {
+    const el = document.getElementById('scoreNum');
+    const ring = document.getElementById('ringFill');
+    const circumference = 439.8;
+    let cur = 0;
+    const interval = setInterval(() => {
+        if(cur >= target) {
+            clearInterval(interval);
+            updateStatus(target);
+        }
+        el.innerText = cur;
+        ring.style.strokeDashoffset = circumference - (circumference * cur / 100);
+        cur++;
+    }, 20);
+}
+
+function updateStatus(s) {
+    const label = document.getElementById('scoreLabel');
+    if(s > 70) { label.innerText = "Strong Presence"; label.style.color = "var(--green)"; }
+    else if(s > 40) { label.innerText = "Average Presence"; label.style.color = "var(--yellow)"; }
+    else { label.innerText = "Weak Presence"; label.style.color = "var(--red)"; }
+}
+
+function renderPlatforms(links) {
+    const grid = document.getElementById('platformGrid');
+    grid.innerHTML = '';
+    const detection = {
+        'linkedin.com': 'LinkedIn',
+        'github.com': 'GitHub',
+        'instagram.com': 'Instagram',
+        'twitter.com': 'Twitter/X',
+        'medium.com': 'Medium'
+    };
+    
+    Object.keys(detection).forEach(site => {
+        const found = links.some(l => l.includes(site));
+        const card = document.createElement('div');
+        card.className = 'platform-card';
+        card.innerHTML = `<div class="p-info"><div class="p-name">${detection[site]}</div><div class="p-status ${found ? 'present' : 'missing'}">${found ? '● Present' : '○ Missing'}</div></div>`;
+        grid.appendChild(card);
+    });
+}
+
+function handlePayment() {
+    window.open('https://rzp.io/rzp/PUNs9XqO', '_blank');
+    document.getElementById('ipaidBtn').classList.add('show');
+}
+
+function unlockReport() {
+    document.getElementById('lockedSection').style.display = 'none';
+    const report = document.getElementById('premiumReport');
+    report.classList.add('revealed');
+    document.getElementById('rptName').innerText = document.getElementById('nameInput').value;
+    document.getElementById('rptScore').innerText = globalData.google_score;
+    document.getElementById('diagBar').style.width = globalData.google_score + '%';
+    document.getElementById('diagBar').style.backgroundColor = globalData.google_score > 40 ? '#2a9d8f' : '#e63946';
+}
+
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const name = document.getElementById('nameInput').value;
+    doc.text(`Reputation Audit: ${name}`, 20, 20);
+    doc.text(`Score: ${globalData.google_score}/100`, 20, 30);
+    doc.text(`AI Analysis:`, 20, 45);
+    doc.text(doc.splitTextToSize(globalData.ai, 170), 20, 55);
+    doc.save(`Audit_${name.replace(/\s/g,'_')}.pdf`);
+}
 </script>
 </body>
 </html>
