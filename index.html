@@ -1029,29 +1029,43 @@ let _name = "", _prof = "", _score = 0, _data = null;
 
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('payment') === 'success' || params.get('razorpay_payment_id')) {
+  const isPaid = params.get('payment') === 'success'
+              || !!params.get('razorpay_payment_id')
+              || !!params.get('razorpay_order_id');
+
+  if (isPaid) {
     window.history.replaceState({}, '', window.location.pathname);
-    const saved = localStorage.getItem('gmsPendingData');
+    const saved = localStorage.getItem('gmsPendingData') || sessionStorage.getItem('gmsPendingData');
     if (saved) {
-      _data = JSON.parse(saved);
-      _name = _data._name || '';
-      _prof = _data._prof || '';
-      _score = parseInt(_data.google_score) || 42;
-      localStorage.removeItem('gmsPendingData');
-      document.getElementById('heroSection').style.display = 'none';
-      renderResults();
-      setTimeout(unlockReport, 600);
+      try {
+        _data = JSON.parse(saved);
+        _name = _data._name || '';
+        _prof = _data._prof || '';
+        _score = parseInt(_data.google_score) || 42;
+        localStorage.removeItem('gmsPendingData');
+        sessionStorage.removeItem('gmsPendingData');
+        document.getElementById('heroSection').style.display = 'none';
+        renderResults();
+        setTimeout(unlockReport, 600);
+      } catch(e) { showPaidBanner(); }
     } else {
-      document.getElementById('heroSection').style.display = 'flex';
-      const banner = document.createElement('div');
-      banner.style.cssText = 'background:#edfaf4;border:1.5px solid #1a7f5a;border-radius:14px;padding:14px 20px;margin-bottom:20px;color:#1a7f5a;font-weight:600;font-size:14px;display:flex;align-items:center;gap:10px;';
-      banner.innerHTML = 'Payment confirmed. Re-enter your name below to access the full report.';
-      const card = document.querySelector('.card');
-      card.insertBefore(banner, card.firstChild);
-      localStorage.setItem('gmsJustPaid', '1');
+      showPaidBanner();
     }
   }
 });
+
+function showPaidBanner() {
+  document.getElementById('heroSection').style.display = 'flex';
+  const existing = document.getElementById('paidBanner');
+  if (existing) existing.remove();
+  const banner = document.createElement('div');
+  banner.id = 'paidBanner';
+  banner.style.cssText = 'background:#edfaf4;border:1.5px solid #1a7f5a;border-radius:14px;padding:14px 20px;margin-bottom:20px;color:#1a7f5a;font-weight:600;font-size:14px;display:flex;align-items:center;gap:10px;';
+  banner.innerHTML = '&#10003; Payment confirmed. Enter your name below to access the full report.';
+  const card = document.querySelector('.card');
+  card.insertBefore(banner, card.firstChild);
+  localStorage.setItem('gmsJustPaid', '1');
+}
 
 let stepTimeout;
 function animateLoader() {
@@ -1379,7 +1393,11 @@ function applyCoupon() {
 }
 
 function handlePayment() {
-  if (_data) { localStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof})); }
+  if (_data) {
+    const payload = JSON.stringify({..._data, _name, _prof});
+    localStorage.setItem('gmsPendingData', payload);
+    sessionStorage.setItem('gmsPendingData', payload);
+  }
   window.location.href = 'https://rzp.io/rzp/G7JGvoDI';
 }
 
