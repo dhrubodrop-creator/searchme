@@ -1054,7 +1054,7 @@ let _name = "", _prof = "", _score = 0, _data = null;
 // Auto-unlock if redirected back from Razorpay
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('payment') === 'success') {
+  if (params.get('payment') === 'success' || params.get('razorpay_payment_id')) {
     // Clean URL
     window.history.replaceState({}, '', window.location.pathname);
     const saved = localStorage.getItem('gmsPendingData');
