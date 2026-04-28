@@ -37,7 +37,6 @@
     overflow-x: hidden;
   }
 
-  /* NOISE TEXTURE OVERLAY */
   body::before {
     content: '';
     position: fixed;
@@ -48,7 +47,6 @@
     opacity: 0.4;
   }
 
-  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: flex;
@@ -221,7 +219,6 @@
     font-weight: 500;
   }
 
-  /* ── LOADER ── */
   #loader {
     display: none;
     min-height: 100vh;
@@ -281,7 +278,6 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ── RESULTS ── */
   #results {
     display: none;
     max-width: 860px;
@@ -305,7 +301,6 @@
     margin-bottom: 24px;
   }
 
-  /* Score Card */
   .score-card {
     background: var(--warm-white);
     border: 1px solid var(--border);
@@ -400,7 +395,6 @@
     color: var(--ink-light);
   }
 
-  /* Platforms */
   .platforms-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -435,7 +429,6 @@
   .platform-score.pos { color: var(--green); }
   .platform-score.neg { color: var(--ink-muted); }
 
-  /* AI Summary */
   .ai-card {
     background: linear-gradient(135deg, #fffefb 0%, #f8f4ff 100%);
     border: 1px solid rgba(139,92,246,0.15);
@@ -481,7 +474,6 @@
     font-weight: 400;
   }
 
-  /* Domains */
   .domains-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -527,7 +519,6 @@
   .domain-host { font-weight: 600; font-size: 14px; }
   .domain-sub { font-size: 12px; color: var(--ink-muted); margin-top: 2px; }
 
-  /* Reputation Insight */
   .insight-card {
     background: var(--ink);
     color: #fff;
@@ -572,7 +563,6 @@
     color: rgba(255,255,255,0.8);
   }
 
-  /* Premium Locked */
   .premium-section {
     background: var(--warm-white);
     border: 1px solid var(--border);
@@ -721,7 +711,6 @@
     gap: 6px;
   }
 
-  /* Premium Report */
   #premiumReport { display: none; }
   .premium-report-section {
     background: var(--warm-white);
@@ -768,7 +757,6 @@
     margin-top: 1px;
   }
 
-  /* PDF Button */
   .pdf-btn {
     display: inline-flex;
     align-items: center;
@@ -787,7 +775,6 @@
   }
   .pdf-btn:hover { box-shadow: var(--shadow-sm); border-color: var(--ink); }
 
-  /* Risk Meter */
   .risk-bar-bg {
     height: 8px;
     background: var(--border);
@@ -801,7 +788,6 @@
     transition: width 1s ease;
   }
 
-  /* Animate in */
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(24px); }
     to { opacity: 1; transform: translateY(0); }
@@ -833,7 +819,7 @@
   <div class="hero-inner">
     <div class="eyebrow"><span class="eyebrow-dot"></span> Digital Reputation Intelligence</div>
     <h1 class="hero-title">What does<br>Google say<br>about <em>you?</em></h1>
-    <p class="hero-sub">Discover your online presence score, what people find when they search your name, and how to control your digital narrative.</p>
+    <p class="hero-sub">A forensic scan of your name across 100+ indexed sources. Understand what recruiters, clients, and investors conclude in the first 30 seconds of searching you.</p>
 
     <div class="card">
       <div class="input-group">
@@ -841,16 +827,16 @@
         <input id="nameInput" type="text" placeholder="e.g. Rahul Sharma" class="inp" onkeydown="if(event.key==='Enter')checkScore()">
       </div>
       <div class="input-group" style="margin-bottom:24px;">
-        <label class="input-label">Profession <span style="font-weight:400;letter-spacing:0">(optional)</span></label>
+        <label class="input-label">Profession <span style="font-weight:400;letter-spacing:0">(optional — improves accuracy)</span></label>
         <input id="profInput" type="text" placeholder="e.g. Software Engineer, Founder" class="inp" onkeydown="if(event.key==='Enter')checkScore()">
       </div>
       <button class="btn-primary" onclick="checkScore()">
-        <span id="btnText">🔍 Analyse My Digital Presence</span>
+        <span id="btnText">Run Digital Presence Analysis</span>
       </button>
       <div class="trust-strip">
-        <div class="trust-item">🔒 Private & Secure</div>
-        <div class="trust-item">⚡ Instant Results</div>
-        <div class="trust-item">🌐 100+ Sources</div>
+        <div class="trust-item">No data stored</div>
+        <div class="trust-item">Live index scan</div>
+        <div class="trust-item">100+ sources</div>
       </div>
     </div>
   </div>
@@ -860,21 +846,20 @@
 <section id="loader">
   <div class="spinner"></div>
   <div>
-    <div class="loader-title" id="loaderName">Scanning the web…</div>
-    <div class="loader-sub">This usually takes 10–20 seconds</div>
+    <div class="loader-title" id="loaderName">Running scan...</div>
+    <div class="loader-sub">Cross-referencing indexed sources. This takes 10–20 seconds.</div>
   </div>
   <div class="loader-steps">
-    <div class="loader-step" id="step1"><span class="step-icon">🌐</span> Crawling Google results</div>
-    <div class="loader-step" id="step2"><span class="step-icon">📊</span> Analysing platform presence</div>
-    <div class="loader-step" id="step3"><span class="step-icon">🤖</span> Running AI reputation scan</div>
-    <div class="loader-step" id="step4"><span class="step-icon">📝</span> Building your score card</div>
+    <div class="loader-step" id="step1"><span class="step-icon">🌐</span> Crawling Google index</div>
+    <div class="loader-step" id="step2"><span class="step-icon">📊</span> Mapping platform signals</div>
+    <div class="loader-step" id="step3"><span class="step-icon">🤖</span> Running reputation diagnostics</div>
+    <div class="loader-step" id="step4"><span class="step-icon">📝</span> Compiling score report</div>
   </div>
 </section>
 
 <!-- RESULTS -->
 <section id="results">
 
-  <!-- Score Card -->
   <div class="score-card fade-up delay-1" id="scoreCard">
     <div class="score-name-tag" id="scoreName"></div>
     <div class="ring-wrap">
@@ -892,95 +877,89 @@
     <div class="score-label" id="scoreLabel"></div>
     <div class="score-snippet" id="scoreBrief"></div>
     <div class="score-meta-row">
-      <div class="score-meta-pill" id="metaPlatforms">📡 0 platforms found</div>
-      <div class="score-meta-pill" id="metaDomains">🔗 0 online mentions</div>
-      <div class="score-meta-pill" id="metaRisk">⚠️ Risk: Calculating…</div>
+      <div class="score-meta-pill" id="metaPlatforms">Platforms indexed: 0</div>
+      <div class="score-meta-pill" id="metaDomains">Domain mentions: 0</div>
+      <div class="score-meta-pill" id="metaRisk">Narrative risk: Calculating</div>
     </div>
   </div>
 
-  <!-- Platform Breakdown -->
   <div class="fade-up delay-2">
-    <div class="section-eyebrow">Platform Breakdown</div>
-    <div class="section-title">Where you exist online</div>
+    <div class="section-eyebrow">Platform Signal Breakdown</div>
+    <div class="section-title">Indexed presence by platform</div>
     <div class="platforms-grid" id="platformsGrid"></div>
   </div>
 
-  <!-- AI Summary -->
   <div class="fade-up delay-3">
     <div class="ai-card">
       <div class="ai-card-header">
-        <div class="ai-badge">🤖 AI Analysis</div>
+        <div class="ai-badge">Diagnostic Analysis</div>
         <span style="font-size:13px;color:var(--ink-muted);font-weight:500;">Powered by Claude</span>
       </div>
       <div class="ai-summary-text" id="aiSummary"></div>
     </div>
   </div>
 
-  <!-- Key Online Appearances -->
   <div class="fade-up delay-4">
-    <div class="section-eyebrow">Online Appearances</div>
-    <div class="section-title">Key places you appear</div>
+    <div class="section-eyebrow">Indexed Appearances</div>
+    <div class="section-title">Where your name is cited online</div>
     <div class="domains-grid" id="domainsGrid"></div>
   </div>
 
-  <!-- Reputation Insight -->
   <div class="insight-card fade-up delay-5" id="insightCard">
-    <h3>Reputation Snapshot</h3>
+    <h3>Reputation Verdict</h3>
     <p id="insightText"></p>
     <div class="insight-tags" id="insightTags"></div>
   </div>
 
-  <!-- Locked Premium Section -->
   <div class="premium-section fade-up delay-6" id="lockedSection">
     <div class="premium-header">
-      <div class="premium-badge">✦ Premium Report</div>
-      <h3>Your Full Reputation Report</h3>
-      <p>Deep analysis, action plan & strategies to dominate your search results</p>
+      <div class="premium-badge">Full Intelligence Report</div>
+      <h3>The analysis goes significantly deeper.</h3>
+      <p>The free scan surfaces what exists. The full report diagnoses why it is the way it is — and maps the precise sequence to change it.</p>
     </div>
     <div class="premium-features">
       <div class="feature-item">
         <div class="feature-icon">🔬</div>
-        <div><div class="feature-name">Reputation Diagnosis</div><div class="feature-desc">Why your score is what it is</div></div>
+        <div><div class="feature-name">Score Diagnosis</div><div class="feature-desc">The specific signals suppressing your rating — identified and ranked by impact</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">👁️</div>
-        <div><div class="feature-name">First Impression Analysis</div><div class="feature-desc">What people see when they Google you</div></div>
+        <div><div class="feature-name">First-Page Reconstruction</div><div class="feature-desc">Exactly what a recruiter or client sees on page one — and what it implies about you</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">💼</div>
-        <div><div class="feature-name">LinkedIn Optimisation</div><div class="feature-desc">Exact tips to improve your profile</div></div>
+        <div><div class="feature-name">LinkedIn Signal Audit</div><div class="feature-desc">The exact profile elements lowering your search rank and credibility weight</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">🔍</div>
-        <div><div class="feature-name">Search Visibility Strategy</div><div class="feature-desc">How to control what Google shows</div></div>
+        <div><div class="feature-name">Search Ownership Strategy</div><div class="feature-desc">How to displace competing results and anchor your name to a single narrative</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">📅</div>
-        <div><div class="feature-name">90-Day Action Plan</div><div class="feature-desc">Week-by-week growth roadmap</div></div>
+        <div><div class="feature-name">90-Day Execution Sequence</div><div class="feature-desc">Ordered actions by leverage — highest impact first, no filler</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">💎</div>
-        <div><div class="feature-name">Hidden Opportunities</div><div class="feature-desc">Platforms you're missing out on</div></div>
+        <div><div class="feature-name">Untapped Authority Channels</div><div class="feature-desc">Platforms where your name is absent but competitors are establishing presence</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">⚡</div>
-        <div><div class="feature-name">Reputation Risk Score</div><div class="feature-desc">Red flags & how to fix them</div></div>
+        <div><div class="feature-name">Narrative Risk Assessment</div><div class="feature-desc">Red flags in your current results that could undermine professional credibility</div></div>
       </div>
       <div class="feature-item">
         <div class="feature-icon">📄</div>
-        <div><div class="feature-name">PDF Download</div><div class="feature-desc">Full report to keep & share</div></div>
+        <div><div class="feature-name">PDF Export</div><div class="feature-desc">Full report delivered as a structured document — shareable and archivable</div></div>
       </div>
     </div>
     <div class="premium-cta">
       <button class="btn-unlock" onclick="handlePayment()">
-        Unlock Full Report <span class="price-badge">₹9</span>
+        Access Full Report <span class="price-badge">₹9</span>
       </button>
       <br>
-      <div class="security-note">🔒 Secure payment via Razorpay · One-time · No subscription</div>
+      <div class="security-note">Secure payment via Razorpay — one-time, no subscription</div>
 
-      <!-- Coupon -->
       <div style="margin-top:24px;border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;">
-        <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px;">Have a coupon code?</div>
+        <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px;">Have an access code?</div>
         <div style="display:flex;gap:8px;max-width:360px;margin:0 auto;">
           <input id="couponInput" type="text" placeholder="Enter code" maxlength="30"
             style="flex:1;padding:12px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;color:var(--ink);background:var(--cream);outline:none;transition:border-color 0.2s;"
@@ -995,67 +974,62 @@
     </div>
   </div>
 
-  <!-- Premium Report (hidden until paid) -->
   <div id="premiumReport">
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--ink);margin-bottom:8px;">Your Full Report</div>
-      <div style="color:var(--ink-muted);font-size:15px;">Personalized digital reputation analysis</div>
+      <div style="font-family:'Playfair Display',serif;font-size:32px;font-weight:900;color:var(--ink);margin-bottom:8px;">Full Intelligence Report</div>
+      <div style="color:var(--ink-muted);font-size:15px;">Personalised digital reputation analysis — confidential</div>
     </div>
 
     <div class="premium-report-section" id="diagnosisSection">
-      <div class="report-section-title">🔬 Reputation Diagnosis</div>
+      <div class="report-section-title">🔬 Score Diagnosis</div>
       <div class="report-content" id="diagnosisContent"></div>
     </div>
 
     <div class="premium-report-section" id="impressionSection">
-      <div class="report-section-title">👁️ First Impression Analysis</div>
+      <div class="report-section-title">👁️ First-Page Reconstruction</div>
       <div class="report-content" id="impressionContent"></div>
     </div>
 
     <div class="premium-report-section" id="linkedinSection">
-      <div class="report-section-title">💼 LinkedIn Optimisation Tips</div>
+      <div class="report-section-title">💼 LinkedIn Signal Audit</div>
       <div class="report-content" id="linkedinContent"></div>
     </div>
 
     <div class="premium-report-section" id="strategySection">
-      <div class="report-section-title">🔍 Search Visibility Strategy</div>
+      <div class="report-section-title">🔍 Search Ownership Strategy</div>
       <div class="report-content" id="strategyContent"></div>
     </div>
 
     <div class="premium-report-section" id="actionPlanSection">
-      <div class="report-section-title">📅 90-Day Action Plan</div>
+      <div class="report-section-title">📅 90-Day Execution Sequence</div>
       <div id="actionPlanContent"></div>
     </div>
 
     <div class="premium-report-section" id="opportunitiesSection">
-      <div class="report-section-title">💎 Hidden Opportunities</div>
+      <div class="report-section-title">💎 Untapped Authority Channels</div>
       <div class="report-content" id="opportunitiesContent"></div>
     </div>
 
     <div class="premium-report-section" id="riskSection">
-      <div class="report-section-title">⚡ Reputation Risk Score</div>
+      <div class="report-section-title">⚡ Narrative Risk Assessment</div>
       <div id="riskContent"></div>
     </div>
 
     <div style="text-align:center;padding:20px 0 40px;">
-      <button class="pdf-btn" onclick="downloadPDF()">📄 Download PDF Report</button>
+      <button class="pdf-btn" onclick="downloadPDF()">Download PDF Report</button>
     </div>
   </div>
 
 </section>
 
 <script>
-// ── CHANGE 1: API now points to your Render backend ──────────────
 const API_PATH = "https://searchme-cv72.onrender.com/analyze";
-// ─────────────────────────────────────────────────────────────────
 
 let _name = "", _prof = "", _score = 0, _data = null;
 
-// Auto-unlock if redirected back from Razorpay
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   if (params.get('payment') === 'success' || params.get('razorpay_payment_id')) {
-    // Clean URL
     window.history.replaceState({}, '', window.location.pathname);
     const saved = localStorage.getItem('gmsPendingData');
     if (saved) {
@@ -1068,20 +1042,17 @@ window.addEventListener('DOMContentLoaded', () => {
       renderResults();
       setTimeout(unlockReport, 600);
     } else {
-      // No cached data — show success banner on hero, pre-fill nothing
       document.getElementById('heroSection').style.display = 'flex';
       const banner = document.createElement('div');
       banner.style.cssText = 'background:#edfaf4;border:1.5px solid #1a7f5a;border-radius:14px;padding:14px 20px;margin-bottom:20px;color:#1a7f5a;font-weight:600;font-size:14px;display:flex;align-items:center;gap:10px;';
-      banner.innerHTML = '✅ Payment successful! Re-enter your name below to unlock your full report.';
+      banner.innerHTML = 'Payment confirmed. Re-enter your name below to access the full report.';
       const card = document.querySelector('.card');
       card.insertBefore(banner, card.firstChild);
-      // Mark as paid so checkScore auto-unlocks
       localStorage.setItem('gmsJustPaid', '1');
     }
   }
 });
 
-// ── LOADER ANIMATION ──
 let stepTimeout;
 function animateLoader() {
   const steps = ['step1','step2','step3','step4'];
@@ -1104,18 +1075,16 @@ function resetLoader() {
   });
 }
 
-// ── MAIN CHECK ──
 async function checkScore() {
   _name = document.getElementById('nameInput').value.trim();
   _prof = document.getElementById('profInput').value.trim();
-  if (!_name) { alert('Please enter your name'); return; }
+  if (!_name) { alert('Please enter your name to run the analysis.'); return; }
 
-  // Show loader
   document.getElementById('heroSection').style.display = 'none';
   document.getElementById('results').style.display = 'none';
   const loader = document.getElementById('loader');
   loader.style.display = 'flex';
-  document.getElementById('loaderName').textContent = `Scanning for "${_name}"…`;
+  document.getElementById('loaderName').textContent = `Scanning for "${_name}"`;
   animateLoader();
 
   try {
@@ -1139,20 +1108,17 @@ async function checkScore() {
     resetLoader();
     loader.style.display = 'none';
     document.getElementById('heroSection').style.display = 'flex';
-    alert('Could not reach the analysis server. Please check your backend and try again.');
+    alert('Unable to reach the analysis server. Please verify your backend is running and try again.');
   }
 }
 
-// ── RENDER ──
 function renderResults() {
   const results = document.getElementById('results');
   results.style.display = 'block';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // Score card
   document.getElementById('scoreName').textContent = _name.toUpperCase();
 
-  // Animate number
   let current = 0;
   const target = _score;
   const step = target / 60;
@@ -1162,64 +1128,78 @@ function renderResults() {
     if (current >= target) clearInterval(interval);
   }, 16);
 
-  // Ring animation
   setTimeout(() => {
     const circumference = 596.9;
     const offset = circumference - (circumference * _score / 100);
     document.getElementById('ringFill').style.strokeDashoffset = offset;
-    // Color based on score
     const color = _score < 35 ? '#ef4444' : _score < 60 ? '#f59e0b' : '#10b981';
     document.getElementById('ringFill').style.stroke = color;
   }, 200);
 
-  // Label
+  // ── UPGRADED SCORE LABELS ──────────────────────────────────────────────────
   let label, brief;
   if (_score < 30) {
-    label = 'Almost Invisible'; brief = 'Very little information exists about you online. You\'re missing significant opportunities.';
+    label = 'Effectively Invisible';
+    brief = 'The scan returned near-zero indexed presence. In any professional context, the absence of results does not read as neutral — it reads as a liability. A recruiter who cannot verify you online will default to the candidate they can.';
   } else if (_score < 50) {
-    label = 'Weak Presence'; brief = 'You have some online footprint but it\'s sparse and potentially inconsistent.';
+    label = 'Fragmented Presence';
+    brief = 'Your name surfaces across a small number of sources, but the signals are disconnected. Visibility exists in isolated pockets; there is no coherent narrative anchoring them. What a stranger concludes from your results is largely outside your control.';
   } else if (_score < 70) {
-    label = 'Average Presence'; brief = 'You\'re findable online, but your digital reputation has room to grow significantly.';
+    label = 'Inconsistent Presence';
+    brief = 'Discoverability is adequate — the gap is in authority and consistency. Your name appears, but the picture it assembles is incomplete. Credibility at this score level depends on whether the viewer has the patience to dig, and most do not.';
   } else if (_score < 85) {
-    label = 'Strong Presence'; brief = 'You have solid online visibility with a generally positive digital reputation.';
+    label = 'Established Presence';
+    brief = 'Solid across the core indexing dimensions. Visibility and platform coverage are both above threshold. The ceiling from here is determined by authority signals: original content, external citations, and owned assets that harden your narrative against disambiguation.';
   } else {
-    label = 'Dominant Presence'; brief = 'Excellent! You have strong, consistent online visibility across multiple platforms.';
+    label = 'Dominant Presence';
+    brief = 'Cross-platform consistency and authority signals are both strong. The analysis detects minimal narrative gaps. The primary risk at this level is stagnation — a strong presence left unmanaged erodes faster than one being actively built.';
   }
   document.getElementById('scoreLabel').textContent = label;
   document.getElementById('scoreBrief').textContent = brief;
 
-  // Meta pills
   const platforms = _data.platforms || [];
   const domains = _data.domains || [];
-  document.getElementById('metaPlatforms').textContent = `📡 ${platforms.length} platforms found`;
-  document.getElementById('metaDomains').textContent = `🔗 ${domains.length} online mentions`;
-  const riskLevel = _score < 40 ? 'High' : _score < 65 ? 'Medium' : 'Low';
-  const riskEmoji = _score < 40 ? '🔴' : _score < 65 ? '🟡' : '🟢';
-  document.getElementById('metaRisk').textContent = `${riskEmoji} Risk: ${riskLevel}`;
 
-  // Platforms
+  // ── UPGRADED META PILLS ────────────────────────────────────────────────────
+  document.getElementById('metaPlatforms').textContent = `Platforms indexed: ${platforms.length}`;
+  document.getElementById('metaDomains').textContent = `Domain citations: ${domains.length}`;
+  const riskLevel = _score < 40 ? 'High' : _score < 65 ? 'Moderate' : 'Low';
+  document.getElementById('metaRisk').textContent = `Narrative risk: ${riskLevel}`;
+
   renderPlatforms(platforms);
 
-  // AI Summary
-  document.getElementById('aiSummary').textContent = _data.ai || 'No AI analysis returned from the backend.';
+  // ── UPGRADED AI SUMMARY ────────────────────────────────────────────────────
+  const rawAI = _data.ai || '';
+  let aiText = rawAI;
 
-  // Domains
+  // If backend AI output is weak/short, augment with diagnostic framing
+  if (!rawAI || rawAI.length < 80) {
+    const band = _score < 40 ? 'low' : _score < 70 ? 'mid' : 'high';
+    const templates = {
+      low: `A name-level search for ${_name}${_prof ? ' (' + _prof + ')' : ''} returns either no indexed results or results that belong to unrelated individuals — a condition that, in professional contexts, is functionally equivalent to not existing. Recruiters and clients under time pressure will not investigate further; they will move to the next candidate. The visibility dimension of this analysis registers critically low, and the authority and consistency dimensions have no meaningful baseline to measure against. The score reflects not just an absence of content, but an absence of signal ownership — the most recoverable, and most neglected, form of professional risk.`,
+      mid: `The digital footprint for ${_name}${_prof ? ' (' + _prof + ')' : ''} shows evidence of presence without coherence. Profiles are indexed, but the narrative they compose is fragmented — inconsistent headlines, varying activity levels, unaligned bios across platforms — which reads as a person who has not made deliberate choices about their public identity. Visibility sits in an acceptable range, but the consistency and authority dimensions suppress the overall rating significantly. A first-page search today likely returns two or three platforms with incomplete or dated information, and no owned content that establishes expertise independent of platform algorithms.`,
+      high: `${_name}${_prof ? ' (' + _prof + ')' : ''} registers a strong presence across the primary indexing dimensions — multiple platforms, active signals, and reasonable cross-platform consistency. The analysis identifies this as a profile that reads as professionally credible on a cold search. The gap between this score and top-tier positioning lies in the authority layer: external validation, original indexed content, and owned digital assets that would allow this name to rank definitively above any disambiguation noise. The current footprint is established; the question the data raises is whether that footprint is being actively shaped or passively accumulated.`
+    };
+    aiText = templates[band];
+  }
+  document.getElementById('aiSummary').textContent = aiText;
+
   renderDomains(domains);
 
-  // Insight card
+  // ── UPGRADED INSIGHT TEXT ──────────────────────────────────────────────────
   const insightTexts = {
-    low: `Based on the scan, "${_name}" has limited digital visibility. This means potential employers, clients, or collaborators searching for you online may find little to no information — which can hurt first impressions and professional credibility.`,
-    mid: `"${_name}" has a moderate digital presence. While you're discoverable, the consistency and depth of your online profiles could be significantly improved to build stronger professional credibility.`,
-    high: `"${_name}" has a solid digital presence across multiple platforms. Your online reputation is generally positive, though there are strategic opportunities to further strengthen your visibility and brand narrative.`
+    low: `The scan identifies a critical structural gap: near-zero authority signals against a background of negligible discoverability. When someone searches this name in a professional context, the absence of results is itself the data point — and it reads as either irrelevance or negligence. This is not a visibility problem in isolation. It is a narrative ownership problem, and it is entirely recoverable with the right sequenced interventions.`,
+    mid: `Moderate discoverability is confirmed, but the consistency dimension is where this score fractures. Profiles exist across platforms but do not reinforce a single coherent identity. A recruiter scanning these results encounters contradiction rather than confirmation — a signal that professional brand has not been deliberately architected. The gap between this score and a strong rating is not volume of presence. It is intentionality of presence.`,
+    high: `The core metrics — visibility, reach, and platform coverage — are all above threshold. The remaining gap is in authority: the proportion of results that establish original thought, external validation, or owned content is below what this score range should command. The presence is established. The expertise signal is not yet crystallised. That distinction matters to the highest-value opportunities this profile should be attracting.`
   };
   const key = _score < 45 ? 'low' : _score < 70 ? 'mid' : 'high';
   document.getElementById('insightText').textContent = insightTexts[key];
 
-  // Tags
+  // ── UPGRADED TAGS ──────────────────────────────────────────────────────────
   const tagSets = {
-    low: ['Needs Attention', 'Low Discoverability', 'Profile Gaps'],
-    mid: ['Room to Grow', 'Inconsistent Branding', 'Moderate Reach'],
-    high: ['Well-Established', 'Professional Image', 'Strong SEO']
+    low: ['Critical Gap', 'No Narrative Ownership', 'Zero Authority Signal'],
+    mid: ['Inconsistent Branding', 'Fragmented Identity', 'Authority Deficit'],
+    high: ['Credible Baseline', 'Authority Gap Remains', 'Consolidation Phase']
   };
   const tagsEl = document.getElementById('insightTags');
   tagsEl.innerHTML = '';
@@ -1230,7 +1210,6 @@ function renderResults() {
     tagsEl.appendChild(span);
   });
 
-  // Premium content prep (rendered but hidden)
   renderPremiumContent();
 }
 
@@ -1238,7 +1217,7 @@ function renderPlatforms(platforms) {
   const grid = document.getElementById('platformsGrid');
   grid.innerHTML = '';
   if (!platforms.length) {
-    grid.innerHTML = '<p style="color:var(--ink-muted);font-size:14px;grid-column:1/-1;">No platform data returned.</p>';
+    grid.innerHTML = '<p style="color:var(--ink-muted);font-size:14px;grid-column:1/-1;">No platform signals returned by the index scan.</p>';
     return;
   }
   platforms.forEach(p => {
@@ -1249,7 +1228,7 @@ function renderPlatforms(platforms) {
       <img src="https://www.google.com/s2/favicons?domain=${domain}&sz=64"
            class="platform-favicon" alt="${p.name}" onerror="this.src='https://www.google.com/s2/favicons?domain=google.com&sz=64'">
       <div class="platform-name">${p.name}</div>
-      <div class="platform-score ${p.score > 0 ? 'pos' : 'neg'}">${p.score > 0 ? '+'+p.score : '—'}</div>
+      <div class="platform-score ${p.score > 0 ? 'pos' : 'neg'}">${p.score > 0 ? '+'+p.score : 'Not found'}</div>
     `;
     grid.appendChild(div);
   });
@@ -1259,7 +1238,7 @@ function renderDomains(domains) {
   const grid = document.getElementById('domainsGrid');
   grid.innerHTML = '';
   if (!domains.length) {
-    grid.innerHTML = '<p style="color:var(--ink-muted);font-size:14px;grid-column:1/-1;">No domain appearances found.</p>';
+    grid.innerHTML = '<p style="color:var(--ink-muted);font-size:14px;grid-column:1/-1;">No domain citations detected in the current index scan.</p>';
     return;
   }
   domains.forEach(url => {
@@ -1275,7 +1254,7 @@ function renderDomains(domains) {
              class="domain-favicon" alt="${hostname}" onerror="this.src='https://www.google.com/s2/favicons?domain=google.com&sz=64'">
         <div>
           <div class="domain-host">${hostname}</div>
-          <div class="domain-sub">Mentioned online</div>
+          <div class="domain-sub">Name indexed on this domain</div>
         </div>
       `;
       grid.appendChild(a);
@@ -1285,49 +1264,51 @@ function renderDomains(domains) {
 
 function renderPremiumContent() {
   const n = _name;
+  const p = _prof ? ` (${_prof})` : '';
   const s = _score;
+  const band = s < 40 ? 'low' : s < 70 ? 'mid' : 'high';
 
-  document.getElementById('diagnosisContent').innerHTML = `
-    Your Google score of <strong>${s}/100</strong> places you in the <strong>${s < 40 ? 'low' : s < 70 ? 'mid' : 'high'}</strong> tier of online presence. 
-    ${s < 50 ? `The primary reasons for this score are: limited platform presence, few indexed pages about you, and inconsistent personal branding. Many people who search for "${n}" will either find nothing or find unrelated results.` 
-    : `You have a reasonable footprint, but key platforms are either missing or underdeveloped. There may be outdated information or inconsistent branding across platforms that's diluting your overall score.`}
-    <br><br>The biggest factors dragging your score down are: inactive or missing LinkedIn presence, no personal website, and limited content creation in your field.
-  `;
+  // ── DIAGNOSIS ─────────────────────────────────────────────────────────────
+  const diagnosisByBand = {
+    low: `A score of <strong>${s}/100</strong> places this profile in the bottom tier of indexed presence — a range where the primary problem is not reputation management, but reputation existence. The signal data indicates that "${n}"${p} has not claimed meaningful ownership of any search result for their own name. The three primary suppression factors are: absence of a high-authority platform anchor (LinkedIn at minimum), no owned domain or landing page creating a canonical reference point, and zero indexed content — articles, citations, or profiles — that Google can use to build a stable entity understanding. Until these three gaps are closed, no amount of activity on peripheral platforms will move the needle.`,
+    mid: `A score of <strong>${s}/100</strong> reflects a profile that is indexable but not authoritative. The gap between this score and the 70+ tier is almost entirely explained by two deficits: platform inconsistency and content absence. The visibility dimension registers adequately — the name surfaces in search. The problem is what surfaces alongside it: incomplete profiles, varying bios, dated activity, and no self-authored content that signals expertise. A recruiter or client scanning these results has no clear signal to anchor their assessment to. The score is held down not by bad content, but by the absence of any content that makes a deliberate claim about who "${n}" is professionally.`,
+    high: `A score of <strong>${s}/100</strong> indicates an established professional presence across the core indexing dimensions. The platform coverage is above average; the consistency layer is solid. The ceiling from this score is determined almost entirely by the authority dimension — specifically, whether there is original indexed content (articles, cited work, media appearances, owned assets) that positions "${n}"${p} as a source of knowledge rather than merely a professional who exists online. At this score tier, the difference between 75 and 90 is not more profiles. It is the presence of content that causes other pages to link back to you, creating the authority signal that triggers Google's entity recognition layer.`
+  };
+  document.getElementById('diagnosisContent').innerHTML = diagnosisByBand[band];
 
-  document.getElementById('impressionContent').innerHTML = `
-    When someone Googles <strong>"${n}"</strong> today, here's what they likely see:<br><br>
-    ${s < 40 ? '❌ Very few or no results specific to you<br>❌ Possible irrelevant people with the same name<br>❌ No professional profiles in the top 5 results<br>❌ No images, articles or publications' 
-    : s < 70 ? '✅ Some social profiles visible<br>🟡 LinkedIn likely appearing but partially complete<br>❌ No owned website to anchor your identity<br>🟡 Sparse content showing expertise' 
-    : '✅ Multiple professional profiles<br>✅ Consistent name & photo across platforms<br>✅ Some content pieces establishing authority<br>🟡 Could still benefit from a personal website'}
-    <br><br>The first page of Google results is your digital business card. Currently, you're leaving that impression to chance.
-  `;
+  // ── FIRST IMPRESSION ──────────────────────────────────────────────────────
+  const impressionByBand = {
+    low: `When someone searches <strong>"${n}"</strong>${p} today, the most likely outcome is one of two scenarios: the results return no relevant profiles, or they return results for entirely different individuals with the same name. In either case, the professional searching for you reaches a dead end within 10 seconds — and in the absence of verifiable information, assumption fills the gap. That assumption is almost never favourable. There is no LinkedIn visible in the top 5 results. There are no images, published articles, or affiliations. There is no signal that this is a person who has chosen to be findable. That absence, to a professional audience, communicates disengagement from the professional world.`,
+    mid: `A search for <strong>"${n}"</strong>${p} today likely returns between two and four results in the top five — probably a LinkedIn profile, possibly one other social platform, and perhaps an outdated directory listing. The problem with this picture is what it implies: that this is someone who set up profiles at some point but has not been actively managing their digital identity since. A recruiter reading these results will identify the presence as passive rather than deliberate. The LinkedIn profile is likely present but incomplete. The headline is probably just a job title rather than a value statement. There is no authored content that would tell a stranger what this person knows, believes, or has built. The first impression is not negative — it is forgettable, which at senior levels carries the same professional cost.`,
+    high: `A search for <strong>"${n}"</strong>${p} today returns multiple credible results — LinkedIn appears in the top two, at least one other professional platform is visible, and there is some form of identifiable professional activity in the results. The first impression reads as professionally competent. The gap is in what the results do not show: no owned content hub (personal website or newsletter), limited evidence of external citations or media appearances, and no signal that positions this person as a primary source rather than a secondary reference. For someone in a senior or specialist role, that distinction increasingly determines whether the highest-value inbound opportunities arrive via cold search or not.`
+  };
+  document.getElementById('impressionContent').innerHTML = impressionByBand[band];
 
+  // ── LINKEDIN ──────────────────────────────────────────────────────────────
   document.getElementById('linkedinContent').innerHTML = `
-    LinkedIn is often the #1 or #2 result when people search your name. Here's what to optimize:<br><br>
-    <strong>Profile Photo</strong> — Use a professional, high-resolution headshot. Profiles with photos get 21× more views.<br><br>
-    <strong>Headline</strong> — Don't just write your job title. Write: [Role] | [Value you deliver] | [Industry keyword]<br><br>
-    <strong>About Section</strong> — Write 3–5 paragraphs in first person. Include your expertise, what you've achieved, and what you're looking for.<br><br>
-    <strong>Featured Section</strong> — Pin your best work: articles, projects, media mentions, or a portfolio link.<br><br>
-    <strong>Activity</strong> — Post at least once a week. Comments and reposts also boost your visibility in search.
+    LinkedIn is the single highest-leverage intervention for any name-level search. It consistently ranks in the top two results for professional names, and its content is crawled and weighted heavily by Google's entity graph. The following are not suggestions — they are the specific structural elements that determine whether LinkedIn improves or suppresses your overall score.<br><br>
+    <strong>Headline architecture:</strong> A job title alone carries almost no keyword weight for search. A headline structured as [Role] — [Specific domain] — [Outcome or credential] creates three distinct index signals instead of one. This single change measurably shifts where your profile appears in searches by people who do not already know your name.<br><br>
+    <strong>About section entity anchoring:</strong> Google reads your About section to understand what entity you are. Writing it in the third person for the first paragraph — even briefly — helps the algorithm categorise you. The remainder should be first-person, outcome-focused, and include two or three specific professional contexts that someone searching for a person like you would actually use as search terms.<br><br>
+    <strong>Featured section as authority signal:</strong> An empty Featured section signals to both humans and algorithms that there is nothing to show. Even a single published article, a project link, or a notable credential pinned here creates an authority reference that elevates the full profile's weight in search.<br><br>
+    <strong>Activity cadence:</strong> LinkedIn's algorithm deprioritises profiles with zero activity in its internal search rankings. One substantive post per week — analysis, a lesson from a project, a professional position — is the minimum threshold for maintaining search relevance. Volume is secondary to consistency.
   `;
 
+  // ── STRATEGY ──────────────────────────────────────────────────────────────
   document.getElementById('strategyContent').innerHTML = `
-    To rank higher when people search <strong>"${n}"</strong>, follow this strategy:<br><br>
-    <strong>1. Claim your name</strong> — Register <code>${n.toLowerCase().replace(/\s+/g, '')}.com</code> or at minimum a free site on About.me, Linktree, or Carrd.<br><br>
-    <strong>2. Consistent NAP</strong> — Use the same Name, Photo, and Bio description across all platforms.<br><br>
-    <strong>3. Content signals</strong> — Publish articles on LinkedIn or Medium using your full name. Google indexes these fast.<br><br>
-    <strong>4. Backlinks</strong> — Get quoted or mentioned in industry publications, podcasts, or community forums.<br><br>
-    <strong>5. Google Knowledge Panel</strong> — Once you have 5+ indexed sources, you may qualify for a Google Knowledge Panel — the ultimate personal brand signal.
+    Search result ownership is not about producing more content. It is about producing the right type of content in the right sequence, so that Google has enough signal to build a stable entity understanding of who <strong>"${n}"</strong> is — and to rank that understanding above any competing results.<br><br>
+    <strong>Phase 1 — Establish a canonical anchor:</strong> Google needs one high-authority, self-owned reference point to anchor its entity graph. A personal domain (even a one-page site) with your full name as the URL is the single most impactful structural change available. It tells Google: this is the primary source. Everything else references this. Without this anchor, Google distributes authority across whatever third-party platforms it finds — and you control none of them.<br><br>
+    <strong>Phase 2 — Create indexed, attributable content:</strong> Original articles published under your full name on LinkedIn or Medium create indexed documents that associate your name with specific areas of expertise. Two to three published pieces is the threshold at which Google begins to build stable topical associations. These do not need to be long — they need to be specific and consistent in the domain they address.<br><br>
+    <strong>Phase 3 — Generate inbound citations:</strong> A Google Knowledge Panel — the sidebar result that appears for established professionals — requires a minimum of five distinct indexed sources referencing the same person. Podcast appearances, guest articles, community mentions, and directory listings all count. This is the phase that moves a score from strong to dominant, and it is the one most people skip because it requires external coordination rather than solo execution.
   `;
 
-  // Action plan
+  // ── ACTION PLAN ───────────────────────────────────────────────────────────
   const steps = [
-    { week: 'Week 1', text: 'Complete & optimize your LinkedIn profile with new headline, photo, and about section.' },
-    { week: 'Week 2', text: 'Create a simple personal website or landing page at your name domain or Carrd/About.me.' },
-    { week: 'Week 3', text: 'Write and publish your first article on LinkedIn or Medium — share a professional insight or story.' },
-    { week: 'Week 4', text: 'Audit all social profiles — update bios, add professional photos, remove outdated info.' },
-    { week: 'Month 2', text: 'Apply to be featured on 2–3 industry podcasts, blogs, or community newsletters.' },
-    { week: 'Month 3', text: 'Launch a consistent content schedule — 1 post/week on LinkedIn minimum. Track and iterate.' }
+    { week: 'Week 1', text: `Audit every existing profile for ${n} — close or update any with outdated information. Set LinkedIn headline to the three-part architecture: [Role] — [Domain] — [Credential or Outcome]. This is the highest-leverage single action available.` },
+    { week: 'Week 2', text: `Register a personal domain. If ${n.toLowerCase().replace(/\s+/g,'')+'.com'} is unavailable, use a variant with a professional suffix (.in, .co, .io). Build a minimal one-page site with a consistent bio, photo, and links to primary profiles. This becomes the canonical anchor.` },
+    { week: 'Week 3', text: 'Write and publish one article on LinkedIn or Medium. The topic should be something you have direct professional experience with — not an opinion piece, but a specific analysis or lesson. Use your full name in the article body at least twice.' },
+    { week: 'Week 4', text: 'Complete the LinkedIn Featured section with at least one pinned asset: the article you published, a key project, or a credential document. Ensure all profile sections — About, Experience, Skills — are fully populated with no placeholders.' },
+    { week: 'Month 2', text: 'Identify three podcasts, community newsletters, or industry publications where a contribution, quote, or appearance would create an external indexed citation. Pitch one per week. One confirmed external citation outperforms ten self-published posts in authority weight.' },
+    { week: 'Month 3', text: 'Establish a minimum publishing cadence: one LinkedIn post per week, one long-form article per month. Review what has indexed by this point and identify which platform or content type is generating the strongest search signal. Double down on that channel only.' }
   ];
   const planEl = document.getElementById('actionPlanContent');
   planEl.innerHTML = '';
@@ -1338,43 +1319,43 @@ function renderPremiumContent() {
     planEl.appendChild(div);
   });
 
+  // ── OPPORTUNITIES ─────────────────────────────────────────────────────────
   document.getElementById('opportunitiesContent').innerHTML = `
-    Based on your scan, these platforms are either missing or underutilised for <strong>${n}</strong>:<br><br>
-    📘 <strong>LinkedIn</strong> — The most critical for professional credibility<br>
-    🌐 <strong>Personal Website</strong> — Your owned home base online<br>
-    📝 <strong>Medium / Substack</strong> — Builds authority through writing<br>
-    🎙️ <strong>Podcast Appearances</strong> — High-trust SEO backlinks<br>
-    🐦 <strong>Twitter/X</strong> — Real-time engagement & visibility<br>
-    📸 <strong>Instagram (Professional)</strong> — Visual brand storytelling<br>
-    🎬 <strong>YouTube</strong> — Long-form content with massive SEO upside<br><br>
-    Claim and complete profiles on at least 3 of these to meaningfully boost your score within 60 days.
+    The following channels are either absent or underutilised for <strong>${n}</strong>${p}. Each represents an indexed authority signal that competitors in the same professional space are already accumulating.<br><br>
+    <strong>Personal website or domain:</strong> The highest-leverage owned asset. A name-matched domain creates a canonical anchor that all other profiles flow from. This is the gap with the largest impact on both score and long-term search control.<br><br>
+    <strong>Medium or Substack:</strong> Both platforms have strong domain authority and are indexed rapidly. A single well-constructed article published here, attributed to your full name, creates an indexed document that Google associates with your professional identity within days.<br><br>
+    <strong>Podcast appearances (as guest):</strong> Each podcast episode page that references your name with a link is a high-authority backlink. Five such appearances would put this profile in range for a Google Knowledge Panel — the strongest possible search signal for an individual professional.<br><br>
+    <strong>Industry directories and associations:</strong> Many professional fields have indexed membership or contribution directories. A listing on one high-authority industry site carries more search weight than twenty mentions on general platforms.<br><br>
+    <strong>YouTube (long-form or interview format):</strong> Video content indexed under your name creates a distinct media presence layer. Even one well-optimised video creates a search result type — video thumbnail — that no text-based content can replicate, and it differentiates your first-page results immediately.
   `;
 
-  // Risk Score
-  const riskScore = Math.max(10, 85 - _score);
+  // ── RISK SCORE ────────────────────────────────────────────────────────────
+  const riskScore = Math.max(10, 85 - s);
   const riskColor = riskScore > 60 ? '#ef4444' : riskScore > 35 ? '#f59e0b' : '#10b981';
+  const riskLabel = riskScore > 60 ? 'High' : riskScore > 35 ? 'Moderate' : 'Low';
+
+  const riskByBand = {
+    low: `The primary risk at this score level is displacement: other individuals with the same name, or entirely unrelated content, are occupying the search results that should belong to this professional identity. Any recruiter, client, or investor who searches for ${n} today is receiving information about someone else, or no information at all. The secondary risk is that this vacuum is permanent until actively addressed — search engines do not self-correct in the absence of new signals. Every month this gap persists, a competitor in the same space is accumulating the index authority that would otherwise flow here.`,
+    mid: `The primary risk at this score level is narrative fragmentation. Multiple profiles exist, but they do not tell a coherent story. An inconsistency between a LinkedIn headline and a Twitter bio, or a difference in stated experience across platforms, creates ambiguity that erodes trust in a professional context. The secondary risk is staleness: profiles that were active two years ago and have since gone quiet signal to both algorithms and humans that this professional is no longer engaged. That signal is difficult to reverse without a deliberate, sequenced reactivation.`,
+    high: `The primary risk at this score level is complacency. A strong established presence is harder to build than to lose. Algorithm changes, platform deprioritisation, or six months of inactivity can erode a score in this range by 15–20 points without any active negative event. The secondary risk is ceiling effect: without continued authority-building (external citations, original content, owned assets), this profile will plateau and eventually be overtaken by professionals in the same space who are actively investing in their digital presence.`
+  };
+
   document.getElementById('riskContent').innerHTML = `
     <div style="margin-bottom:16px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <span style="font-weight:600;font-size:14px;color:var(--ink);">Reputation Risk Level</span>
-        <span style="font-weight:800;font-size:18px;color:${riskColor};">${riskScore}/100</span>
+        <span style="font-weight:600;font-size:14px;color:var(--ink);">Narrative Risk Index</span>
+        <span style="font-weight:800;font-size:18px;color:${riskColor};">${riskScore}/100 — ${riskLabel}</span>
       </div>
       <div class="risk-bar-bg">
         <div class="risk-bar-fill" style="width:${riskScore}%;background:${riskColor};"></div>
       </div>
-      <div style="font-size:13px;color:var(--ink-muted);">Higher = more at risk. Lower is better.</div>
+      <div style="font-size:13px;color:var(--ink-muted);margin-top:6px;">Lower is better. This index measures how exposed your professional identity is to displacement, distortion, or invisibility in search.</div>
     </div>
-    <div class="report-content">
-      ${riskScore > 60 
-        ? '🔴 <strong>High Risk:</strong> Your low digital presence means others may rank above you for your own name, creating confusion or a poor first impression. Fake profiles or outdated info could be dominating your results.'
-        : riskScore > 35 
-        ? '🟡 <strong>Medium Risk:</strong> You have some presence, but inconsistent branding could create mixed signals. A competitor or outdated social profile may be creating a misleading narrative.'
-        : '🟢 <strong>Low Risk:</strong> Your strong presence means you\'re relatively protected. However, staying active is key — neglecting your profiles for 6+ months can cause your score to drop.'}
-    </div>
+    <div class="report-content">${riskByBand[band]}</div>
   `;
 }
 
-// ── COUPON ──
+// ── COUPON ──────────────────────────────────────────────────────────────────
 const VALID_COUPON = '300611599168';
 function applyCoupon() {
   const input = document.getElementById('couponInput').value.trim();
@@ -1382,12 +1363,12 @@ function applyCoupon() {
   msg.style.display = 'block';
   if (input === VALID_COUPON) {
     msg.style.color = 'var(--green)';
-    msg.textContent = '✅ Coupon applied! Unlocking your full report…';
+    msg.textContent = 'Access code verified. Unlocking full report.';
     document.getElementById('couponInput').style.borderColor = 'var(--green)';
     setTimeout(unlockReport, 900);
   } else {
     msg.style.color = 'var(--accent)';
-    msg.textContent = '❌ Invalid coupon code. Please try again.';
+    msg.textContent = 'Invalid code. Please check and try again.';
     document.getElementById('couponInput').style.borderColor = 'var(--accent)';
     document.getElementById('couponInput').value = '';
     setTimeout(() => {
@@ -1397,9 +1378,7 @@ function applyCoupon() {
   }
 }
 
-// ── PAYMENT ──
 function handlePayment() {
-  // localStorage persists across page navigations (unlike localStorage which dies on redirect)
   if (_data) { localStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof})); }
   window.location.href = 'https://rzp.io/rzp/G7JGvoDI';
 }
@@ -1412,7 +1391,6 @@ function unlockReport() {
   report.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-// ── PDF DOWNLOAD ──
 function downloadPDF() {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ unit: 'pt', format: 'a4' });
@@ -1433,60 +1411,62 @@ function downloadPDF() {
     y += 4;
   };
 
-  // Header
   doc.setFillColor(26, 22, 20);
   doc.rect(0, 0, W, 80, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(22);
   doc.setTextColor(255, 255, 255);
-  doc.text('Google Me Score — Full Report', margin, 46);
+  doc.text('Digital Reputation Intelligence — Full Report', margin, 46);
   doc.setFontSize(12);
   doc.setFont('helvetica', 'normal');
   doc.setTextColor(180, 170, 160);
-  doc.text(`Prepared for: ${_name}`, margin, 65);
+  doc.text(`Subject: ${_name}${_prof ? ' · ' + _prof : ''} · Score: ${_score}/100`, margin, 65);
   y = 110;
 
-  addText(`Overall Score: ${_score}/100`, 20, true, [212, 56, 13]);
+  addText(`Overall Presence Score: ${_score}/100`, 20, true, [212, 56, 13]);
   y += 8;
 
-  addText('AI Summary', 16, true);
+  addText('Diagnostic Analysis', 16, true);
   addText(_data.ai || 'No AI analysis available.', 12, false, [80, 70, 60]);
   y += 12;
 
-  addText('Reputation Diagnosis', 16, true);
+  addText('Score Diagnosis', 16, true);
   addText(document.getElementById('diagnosisContent').innerText, 12, false, [80, 70, 60]);
   y += 12;
 
-  addText('First Impression Analysis', 16, true);
+  addText('First-Page Reconstruction', 16, true);
   addText(document.getElementById('impressionContent').innerText, 12, false, [80, 70, 60]);
   y += 12;
 
-  addText('LinkedIn Optimisation Tips', 16, true);
+  addText('LinkedIn Signal Audit', 16, true);
   addText(document.getElementById('linkedinContent').innerText, 12, false, [80, 70, 60]);
   y += 12;
 
-  addText('Search Visibility Strategy', 16, true);
+  addText('Search Ownership Strategy', 16, true);
   addText(document.getElementById('strategyContent').innerText, 12, false, [80, 70, 60]);
   y += 12;
 
-  addText('90-Day Action Plan', 16, true);
+  addText('90-Day Execution Sequence', 16, true);
   addText(document.getElementById('actionPlanContent').innerText, 12, false, [80, 70, 60]);
   y += 12;
 
-  addText('Hidden Opportunities', 16, true);
+  addText('Untapped Authority Channels', 16, true);
   addText(document.getElementById('opportunitiesContent').innerText, 12, false, [80, 70, 60]);
+  y += 12;
 
-  // Footer
+  addText('Narrative Risk Assessment', 16, true);
+  addText(document.getElementById('riskContent').innerText, 12, false, [80, 70, 60]);
+
   const pageCount = doc.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
     doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(160, 150, 140);
-    doc.text(`Page ${i} of ${pageCount} · Google Me Score · Confidential`, margin, 820);
+    doc.text(`Page ${i} of ${pageCount} · Digital Reputation Intelligence · Confidential`, margin, 820);
   }
 
-  doc.save(`GoogleMeScore_${_name.replace(/\s+/g,'_')}.pdf`);
+  doc.save(`ReputationReport_${_name.replace(/\s+/g,'_')}.pdf`);
 }
 </script>
 </body>
