@@ -977,6 +977,21 @@
       </button>
       <br>
       <div class="security-note">🔒 Secure payment via Razorpay · One-time · No subscription</div>
+
+      <!-- Coupon -->
+      <div style="margin-top:24px;border-top:1px solid rgba(255,255,255,0.08);padding-top:20px;">
+        <div style="font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:10px;">Have a coupon code?</div>
+        <div style="display:flex;gap:8px;max-width:360px;margin:0 auto;">
+          <input id="couponInput" type="text" placeholder="Enter code" maxlength="30"
+            style="flex:1;padding:12px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;color:var(--ink);background:var(--cream);outline:none;transition:border-color 0.2s;"
+            onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"
+            onkeydown="if(event.key==='Enter')applyCoupon()">
+          <button onclick="applyCoupon()"
+            style="padding:12px 20px;background:var(--ink);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background 0.2s;"
+            onmouseover="this.style.background='var(--accent)'" onmouseout="this.style.background='var(--ink)'">Apply</button>
+        </div>
+        <div id="couponMsg" style="margin-top:10px;font-size:13px;font-weight:600;display:none;"></div>
+      </div>
     </div>
   </div>
 
@@ -1042,13 +1057,13 @@ window.addEventListener('DOMContentLoaded', () => {
   if (params.get('payment') === 'success') {
     // Clean URL
     window.history.replaceState({}, '', window.location.pathname);
-    const saved = sessionStorage.getItem('gmsPendingData');
+    const saved = localStorage.getItem('gmsPendingData');
     if (saved) {
       _data = JSON.parse(saved);
       _name = _data._name || '';
       _prof = _data._prof || '';
       _score = parseInt(_data.google_score) || 42;
-      sessionStorage.removeItem('gmsPendingData');
+      localStorage.removeItem('gmsPendingData');
       document.getElementById('heroSection').style.display = 'none';
       renderResults();
       setTimeout(unlockReport, 600);
@@ -1061,7 +1076,7 @@ window.addEventListener('DOMContentLoaded', () => {
       const card = document.querySelector('.card');
       card.insertBefore(banner, card.firstChild);
       // Mark as paid so checkScore auto-unlocks
-      sessionStorage.setItem('gmsJustPaid', '1');
+      localStorage.setItem('gmsJustPaid', '1');
     }
   }
 });
@@ -1115,8 +1130,8 @@ async function checkScore() {
     resetLoader();
     loader.style.display = 'none';
     renderResults();
-    if (sessionStorage.getItem('gmsJustPaid')) {
-      sessionStorage.removeItem('gmsJustPaid');
+    if (localStorage.getItem('gmsJustPaid')) {
+      localStorage.removeItem('gmsJustPaid');
       setTimeout(unlockReport, 800);
     }
   } catch(e) {
@@ -1359,12 +1374,33 @@ function renderPremiumContent() {
   `;
 }
 
+// ── COUPON ──
+const VALID_COUPON = '300611599168';
+function applyCoupon() {
+  const input = document.getElementById('couponInput').value.trim();
+  const msg   = document.getElementById('couponMsg');
+  msg.style.display = 'block';
+  if (input === VALID_COUPON) {
+    msg.style.color = 'var(--green)';
+    msg.textContent = '✅ Coupon applied! Unlocking your full report…';
+    document.getElementById('couponInput').style.borderColor = 'var(--green)';
+    setTimeout(unlockReport, 900);
+  } else {
+    msg.style.color = 'var(--accent)';
+    msg.textContent = '❌ Invalid coupon code. Please try again.';
+    document.getElementById('couponInput').style.borderColor = 'var(--accent)';
+    document.getElementById('couponInput').value = '';
+    setTimeout(() => {
+      msg.style.display = 'none';
+      document.getElementById('couponInput').style.borderColor = 'var(--border)';
+    }, 2500);
+  }
+}
+
 // ── PAYMENT ──
-// CHANGE 2: Save data then redirect to Razorpay.
-// Razorpay will send user back to https://searchme-cv72.onrender.com?payment=success
-// (configure this redirect URL in your Razorpay payment link settings)
 function handlePayment() {
-  if (_data) { sessionStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof})); }
+  // localStorage persists across page navigations (unlike localStorage which dies on redirect)
+  if (_data) { localStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof})); }
   window.location.href = 'https://rzp.io/rzp/G7JGvoDI';
 }
 
