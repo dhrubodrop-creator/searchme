@@ -1030,7 +1030,10 @@
 </section>
 
 <script>
-const API_PATH = "/analyze";
+// ── CHANGE 1: API now points to your Render backend ──────────────
+const API_PATH = "https://searchme-cv72.onrender.com/analyze";
+// ─────────────────────────────────────────────────────────────────
+
 let _name = "", _prof = "", _score = 0, _data = null;
 
 // Auto-unlock if redirected back from Razorpay
@@ -1108,7 +1111,7 @@ async function checkScore() {
     });
     _data = await res.json();
     _score = parseInt(_data.google_score) || 42;
-    
+
     resetLoader();
     loader.style.display = 'none';
     renderResults();
@@ -1357,9 +1360,11 @@ function renderPremiumContent() {
 }
 
 // ── PAYMENT ──
+// CHANGE 2: Save data then redirect to Razorpay.
+// Razorpay will send user back to https://searchme-cv72.onrender.com?payment=success
+// (configure this redirect URL in your Razorpay payment link settings)
 function handlePayment() {
   if (_data) { sessionStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof})); }
-  // Redirect same tab so Razorpay can send user back to our page
   window.location.href = 'https://rzp.io/rzp/G7JGvoDI';
 }
 
