@@ -1035,7 +1035,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   if (isPaid) {
     window.history.replaceState({}, '', window.location.pathname);
-    const saved = localStorage.getItem('gmsPendingData') || sessionStorage.getItem('gmsPendingData');
+    const saved = localStorage.getItem('gmsPendingData');
     if (saved) {
       try {
         _data = JSON.parse(saved);
@@ -1043,10 +1043,10 @@ window.addEventListener('DOMContentLoaded', () => {
         _prof = _data._prof || '';
         _score = parseInt(_data.google_score) || 42;
         localStorage.removeItem('gmsPendingData');
-        sessionStorage.removeItem('gmsPendingData');
         document.getElementById('heroSection').style.display = 'none';
+        document.getElementById('loader').style.display = 'none';
         renderResults();
-        setTimeout(unlockReport, 600);
+        setTimeout(unlockReport, 400);
       } catch(e) { showPaidBanner(); }
     } else {
       showPaidBanner();
@@ -1394,9 +1394,7 @@ function applyCoupon() {
 
 function handlePayment() {
   if (_data) {
-    const payload = JSON.stringify({..._data, _name, _prof});
-    localStorage.setItem('gmsPendingData', payload);
-    sessionStorage.setItem('gmsPendingData', payload);
+    localStorage.setItem('gmsPendingData', JSON.stringify({..._data, _name, _prof}));
   }
   window.location.href = 'https://rzp.io/rzp/G7JGvoDI';
 }
