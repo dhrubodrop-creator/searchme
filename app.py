@@ -1,8 +1,8 @@
 import os
 import json
 import requests
-from fastapi import FastAPI, Response
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request, Response
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from groq import Groq
@@ -26,15 +26,21 @@ app.add_middleware(
 SERP_API_KEY = os.getenv("SERPAPI_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
+# ── CHANGE: your real frontend domain ────────────────────────────────────────
+FRONTEND_URL = "https://googlemyscore.online"
+# ─────────────────────────────────────────────────────────────────────────────
+
 if not GROQ_API_KEY:
     print("CRITICAL ERROR: GROQ_API_KEY is missing!")
 
 client = Groq(api_key=GROQ_API_KEY)
 
 # Data Schema
+# ── FIX 1: accept both 'profession' (frontend) and 'context' (legacy) ────────
 class SearchInput(BaseModel):
     name: str
-    context: str = ""
+    profession: str = ""   # frontend sends this
+    context: str = ""      # keep for backwards compatibility
 
 # 2. GOOGLE SEARCH
 def fetch_google_data(name, context):
@@ -48,7 +54,7 @@ def fetch_google_data(name, context):
         }
         response = requests.get("https://serpapi.com/search", params=params, timeout=10)
         data = response.json()
-       
+
         results = data.get("organic_results", [])
         return [{
             "link": item.get("link", ""),
@@ -62,9 +68,9 @@ def fetch_google_data(name, context):
 def audit_reputation(name, search_results):
     if not search_results:
         return 22, "You are a digital ghost. There is zero trail of your professional existence. This is a massive trust red flag."
-   
+
     formatted_results = "\n".join([f"- {r['snippet']} ({r['link']})" for r in search_results])
-   
+
     system_prompt = (
         "You are a brutal, high-stakes Digital Reputation Auditor. "
         "Do not sugarcoat. Be a devil's advocate. "
@@ -72,7 +78,7 @@ def audit_reputation(name, search_results):
         "If they are successful, find why they might still be a risk. "
         "Output MUST be JSON."
     )
-   
+
     user_prompt = (
         f"Name: {name}\n"
         f"Found Data:\n{formatted_results}\n\n"
@@ -98,21 +104,37 @@ def audit_reputation(name, search_results):
 # 4. API ENDPOINTS
 @app.post("/analyze")
 async def handle_analyze(data: SearchInput):
-    results = fetch_google_data(data.name, data.context)
+    # ── FIX 1: use profession if provided, fall back to context ──────────────
+    qualifier = data.profession or data.context
+    results = fetch_google_data(data.name, qualifier)
     score, verdict = audit_reputation(data.name, results)
-   
+
     return {
         "google_score": score,
         "ai": verdict,
         "domains": [r["link"] for r in results]
     }
 
-# 5. UI + HEAD FIX (Critical for 405 error)
+# ── FIX 2: catch Razorpay redirect and forward to frontend ───────────────────
 @app.get("/")
-async def serve_home():
+async def serve_home(request: Request):
+    # Razorpay appends these params on successful payment
+    payment_success = (
+        request.query_params.get("payment") == "success"
+        or request.query_params.get("razorpay_payment_id")
+        or request.query_params.get("razorpay_order_id")
+    )
+
+    if payment_success:
+        # Build the query string and forward everything to the frontend
+        qs = str(request.url.query)
+        redirect_target = f"{FRONTEND_URL}?{qs}" if qs else f"{FRONTEND_URL}?payment=success"
+        return RedirectResponse(url=redirect_target, status_code=302)
+
+    # Normal visit — serve index.html if it exists, otherwise redirect to frontend
     if os.path.exists("index.html"):
         return FileResponse("index.html")
-    return {"error": "index.html not found. Please ensure it is in the root directory."}
+    return RedirectResponse(url=FRONTEND_URL, status_code=302)
 
 @app.head("/")
 async def head_home():
